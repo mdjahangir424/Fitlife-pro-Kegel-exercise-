@@ -34,7 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.ui.theme.BackgroundDark
-import com.example.ui.theme.NeonEmerald
+import com.example.ui.theme.SkyBlueLight
+import com.example.ui.theme.SkyBluePrimary
 import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
 import com.example.util.LanguageStrings
@@ -73,11 +74,11 @@ fun SplashScreen(
                 modifier = Modifier
                     .size(130.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF161B22)),
+                    .background(Color(0xFF0F172A)),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.fitlife_icon_1792717695929),
+                    painter = painterResource(id = R.drawable.fitlife_skyblue_icon_1792774391534),
                     contentDescription = "FitLife Pro Logo",
                     modifier = Modifier.size(110.dp)
                 )
@@ -98,7 +99,7 @@ fun SplashScreen(
                 text = LanguageStrings.get("tagline", isBangla),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
-                color = NeonEmerald
+                color = SkyBlueLight
             )
 
             Spacer(modifier = Modifier.height(48.dp))
@@ -109,8 +110,8 @@ fun SplashScreen(
                     .fillMaxWidth(0.6f)
                     .height(6.dp)
                     .clip(RoundedCornerShape(3.dp)),
-                color = NeonEmerald,
-                trackColor = Color(0xFF21262D)
+                color = SkyBluePrimary,
+                trackColor = Color(0xFF1E293B)
             )
 
             Spacer(modifier = Modifier.height(14.dp))

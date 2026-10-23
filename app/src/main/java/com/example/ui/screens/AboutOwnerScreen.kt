@@ -140,7 +140,7 @@ fun AboutOwnerScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.fitlife_icon_1792717695929),
+                    painter = painterResource(id = R.drawable.fitlife_skyblue_icon_1792774391534),
                     contentDescription = "FitLife Pro Logo",
                     modifier = Modifier.size(76.dp)
                 )

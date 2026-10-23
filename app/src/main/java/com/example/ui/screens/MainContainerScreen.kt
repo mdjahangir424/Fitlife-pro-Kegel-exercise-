@@ -66,6 +66,7 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
     val reminderSettings by viewModel.reminderSettings.collectAsState()
     val exportedJson by viewModel.exportedJson.collectAsState()
     val categorySearch by viewModel.categorySearch.collectAsState()
+    val themeMode by viewModel.themeMode.collectAsState()
 
     val showBottomBar = currentScreen in listOf(Screen.HOME, Screen.CATEGORIES, Screen.PROGRESS, Screen.PROFILE)
 
@@ -231,6 +232,7 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         userProfile = userProfile,
                         workouts = allWorkouts,
                         isBangla = isBangla,
+                        themeMode = themeMode,
                         onWorkoutClick = { workout ->
                             viewModel.selectWorkout(workout)
                             viewModel.navigateTo(Screen.WORKOUT_DETAIL)
@@ -243,6 +245,12 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         },
                         onCalendarClick = {
                             viewModel.navigateTo(Screen.CALENDAR)
+                        },
+                        onToggleLanguage = {
+                            viewModel.toggleLanguage()
+                        },
+                        onToggleTheme = {
+                            viewModel.toggleThemeMode()
                         }
                     )
                 }
@@ -415,6 +423,7 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         userProfile = userProfile,
                         workouts = allWorkouts,
                         isBangla = isBangla,
+                        themeMode = themeMode,
                         onWorkoutClick = { workout ->
                             viewModel.selectWorkout(workout)
                             viewModel.navigateTo(Screen.WORKOUT_DETAIL)
@@ -427,6 +436,12 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         },
                         onCalendarClick = {
                             viewModel.navigateTo(Screen.CALENDAR)
+                        },
+                        onToggleLanguage = {
+                            viewModel.toggleLanguage()
+                        },
+                        onToggleTheme = {
+                            viewModel.toggleThemeMode()
                         }
                     )
                 }

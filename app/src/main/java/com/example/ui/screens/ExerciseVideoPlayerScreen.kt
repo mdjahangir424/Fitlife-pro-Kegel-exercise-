@@ -79,6 +79,12 @@ import com.example.ui.theme.TextSecondary
 import com.example.util.LanguageStrings
 import kotlinx.coroutines.delay
 
+enum class VideoViewMode {
+    HUMAN_HD,
+    BIOMECHANICAL_3D,
+    KINETIC_LOOP
+}
+
 @Composable
 fun ExerciseVideoPlayerScreen(
     exercise: ExerciseEntity?,
@@ -95,7 +101,7 @@ fun ExerciseVideoPlayerScreen(
 
     var isPlaying by remember { mutableStateOf(true) }
     var currentProgress by remember { mutableFloatStateOf(0.35f) }
-    var is3DPhotoRenderMode by remember { mutableStateOf(true) }
+    var viewMode by remember { mutableStateOf(VideoViewMode.HUMAN_HD) }
     var playbackSpeed by remember { mutableFloatStateOf(1.0f) }
 
     val totalDuration = exercise.durationSec.coerceAtLeast(30)
@@ -159,7 +165,7 @@ fun ExerciseVideoPlayerScreen(
                     color = TextPrimary
                 )
                 Text(
-                    text = if (isBangla) "৩ডি অ্যানিমেশন ভিডিও প্লেয়ার" else "3D Animated Video Guide",
+                    text = if (isBangla) "এইচডি ভিডিও ও ৩ডি অ্যানিমেশন" else "HD Video & 3D Animation",
                     fontSize = 11.sp,
                     color = SkyBlueLight,
                     fontWeight = FontWeight.SemiBold
@@ -167,7 +173,13 @@ fun ExerciseVideoPlayerScreen(
             }
 
             IconButton(
-                onClick = { is3DPhotoRenderMode = !is3DPhotoRenderMode },
+                onClick = {
+                    viewMode = when (viewMode) {
+                        VideoViewMode.HUMAN_HD -> VideoViewMode.BIOMECHANICAL_3D
+                        VideoViewMode.BIOMECHANICAL_3D -> VideoViewMode.KINETIC_LOOP
+                        VideoViewMode.KINETIC_LOOP -> VideoViewMode.HUMAN_HD
+                    }
+                },
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
@@ -182,9 +194,47 @@ fun ExerciseVideoPlayerScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        // 3D Video Player Frame
+        // 3-Mode Selector Tabs (Real Human HD | 3D Bio | 3D Kinetic)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(SurfaceCard)
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            val modes = listOf(
+                VideoViewMode.HUMAN_HD to if (isBangla) "বাস্তব মানুষ HD" else "Real Human HD",
+                VideoViewMode.BIOMECHANICAL_3D to if (isBangla) "৩ডি অ্যানাটমি" else "3D Anatomy",
+                VideoViewMode.KINETIC_LOOP to if (isBangla) "৩ডি মোশন" else "3D Motion"
+            )
+
+            modes.forEach { (mode, label) ->
+                val selected = viewMode == mode
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(if (selected) SkyBlueLight else Color.Transparent)
+                        .clickable { viewMode = mode }
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = label,
+                        fontSize = 11.sp,
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                        color = if (selected) Color.Black else TextMuted
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // 3D / Real HD Video Player Frame
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -195,43 +245,72 @@ fun ExerciseVideoPlayerScreen(
             colors = CardDefaults.cardColors(containerColor = Color.Black)
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                if (is3DPhotoRenderMode) {
-                    val imageRes = if (exercise.animationType == "kegel_glute_bridge" || exercise.animationType == "kegel_butterfly") {
-                        R.drawable.img_kegel_bridge_3d_1792773563176
-                    } else {
-                        R.drawable.img_kegel_3d_render_1792773545699
-                    }
+                when (viewMode) {
+                    VideoViewMode.HUMAN_HD -> {
+                        // Authentic Human Trainer in HD Studio
+                        Image(
+                            painter = painterResource(id = R.drawable.img_real_human_kegel_hd_1792774415522),
+                            contentDescription = "Realistic Human Trainer 3D HD",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
 
-                    Image(
-                        painter = painterResource(id = imageRes),
-                        contentDescription = "3D Render",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-
-                    // Holographic scanline overlay
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color(0x3300B4D8 * hudPulse.toInt()),
-                                        Color.Transparent,
-                                        Color(0xAA0A0F1D)
+                        // Real Human Cinematic HUD overlay
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color(0x33000000),
+                                            Color.Transparent,
+                                            Color(0xAA050B14)
+                                        )
                                     )
                                 )
-                            )
-                    )
-                } else {
-                    ExerciseCanvasAnimation(
-                        animationType = exercise.animationType,
-                        modifier = Modifier.fillMaxSize(),
-                        isPlaying = isPlaying
-                    )
+                        )
+                    }
+
+                    VideoViewMode.BIOMECHANICAL_3D -> {
+                        val imageRes = if (exercise.animationType == "kegel_glute_bridge" || exercise.animationType == "kegel_butterfly") {
+                            R.drawable.img_kegel_bridge_3d_1792773563176
+                        } else {
+                            R.drawable.img_kegel_3d_render_1792773545699
+                        }
+
+                        Image(
+                            painter = painterResource(id = imageRes),
+                            contentDescription = "3D Render",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        // Holographic scanline overlay
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color(0x3300B4D8 * hudPulse.toInt()),
+                                            Color.Transparent,
+                                            Color(0xAA0A0F1D)
+                                        )
+                                    )
+                                )
+                        )
+                    }
+
+                    VideoViewMode.KINETIC_LOOP -> {
+                        ExerciseCanvasAnimation(
+                            animationType = exercise.animationType,
+                            modifier = Modifier.fillMaxSize(),
+                            isPlaying = isPlaying
+                        )
+                    }
                 }
 
-                // Top Mode Badge
+                // Top Mode Badge & Speed Selector
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -246,7 +325,11 @@ fun ExerciseVideoPlayerScreen(
                             .padding(horizontal = 10.dp, vertical = 5.dp)
                     ) {
                         Text(
-                            text = if (is3DPhotoRenderMode) "3D BIOMECHANICAL RENDER" else "3D KINETIC SIMULATION",
+                            text = when (viewMode) {
+                                VideoViewMode.HUMAN_HD -> "REAL HUMAN HD 1080P"
+                                VideoViewMode.BIOMECHANICAL_3D -> "3D BIOMECHANICAL RENDER"
+                                VideoViewMode.KINETIC_LOOP -> "3D KINETIC SIMULATION"
+                            },
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             color = SkyBlueLight
@@ -317,12 +400,23 @@ fun ExerciseVideoPlayerScreen(
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                val nextModeLabel = when (viewMode) {
+                    VideoViewMode.HUMAN_HD -> if (isBangla) "৩ডি অ্যানাটমি ➔" else "3D Anatomy ➔"
+                    VideoViewMode.BIOMECHANICAL_3D -> if (isBangla) "৩ডি মোশন ➔" else "3D Motion ➔"
+                    VideoViewMode.KINETIC_LOOP -> if (isBangla) "বাস্তব মানুষ HD ➔" else "Real Human HD ➔"
+                }
                 Text(
-                    text = if (is3DPhotoRenderMode) "ক্যানভাস ৩ডি মোড ➔" else "বায়োমেডিক্যাল ৩ডি ➔",
+                    text = nextModeLabel,
                     fontSize = 11.sp,
                     color = AccentCyan,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.clickable { is3DPhotoRenderMode = !is3DPhotoRenderMode }
+                    modifier = Modifier.clickable {
+                        viewMode = when (viewMode) {
+                            VideoViewMode.HUMAN_HD -> VideoViewMode.BIOMECHANICAL_3D
+                            VideoViewMode.BIOMECHANICAL_3D -> VideoViewMode.KINETIC_LOOP
+                            VideoViewMode.KINETIC_LOOP -> VideoViewMode.HUMAN_HD
+                        }
+                    }
                 )
             }
         }

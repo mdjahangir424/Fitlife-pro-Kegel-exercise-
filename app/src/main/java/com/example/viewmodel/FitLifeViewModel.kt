@@ -10,6 +10,7 @@ import com.example.data.model.ReminderSettingsEntity
 import com.example.data.model.UserProfileEntity
 import com.example.data.model.WorkoutEntity
 import com.example.data.model.WorkoutHistoryEntity
+import com.example.ui.theme.AppThemeMode
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -128,6 +129,22 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
     // JSON export / ownership state
     private val _exportedJson = MutableStateFlow("")
     val exportedJson: StateFlow<String> = _exportedJson.asStateFlow()
+
+    // Theme Mode state (DARK, LIGHT, SYSTEM)
+    private val _themeMode = MutableStateFlow(AppThemeMode.DARK)
+    val themeMode: StateFlow<AppThemeMode> = _themeMode.asStateFlow()
+
+    fun setThemeMode(mode: AppThemeMode) {
+        _themeMode.value = mode
+    }
+
+    fun toggleThemeMode() {
+        _themeMode.value = when (_themeMode.value) {
+            AppThemeMode.DARK -> AppThemeMode.LIGHT
+            AppThemeMode.LIGHT -> AppThemeMode.SYSTEM
+            AppThemeMode.SYSTEM -> AppThemeMode.DARK
+        }
+    }
 
     // Search query for categories
     private val _categorySearch = MutableStateFlow("")
@@ -319,6 +336,12 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
                 repository.saveProfile(UserProfileEntity(id = 1, language = lang))
             }
         }
+    }
+
+    fun toggleLanguage() {
+        val currLang = userProfile.value?.language ?: "bn"
+        val nextLang = if (currLang == "bn") "en" else "bn"
+        setLanguage(nextLang)
     }
 
     fun saveReminder(enabled: Boolean, time: String, days: String) {

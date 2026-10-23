@@ -65,10 +65,13 @@ fun HomeScreen(
     userProfile: UserProfileEntity?,
     workouts: List<WorkoutEntity>,
     isBangla: Boolean,
+    themeMode: com.example.ui.theme.AppThemeMode,
     onWorkoutClick: (WorkoutEntity) -> Unit,
     onStartWorkout: (WorkoutEntity) -> Unit,
     onNotificationClick: () -> Unit,
-    onCalendarClick: () -> Unit
+    onCalendarClick: () -> Unit,
+    onToggleLanguage: () -> Unit,
+    onToggleTheme: () -> Unit
 ) {
     val userName = userProfile?.name ?: if (isBangla) "জাহাঙ্গীর" else "Jahangir"
     val todayWorkout = workouts.firstOrNull { it.id == "wb_kegel_main" } ?: workouts.firstOrNull()
@@ -90,7 +93,7 @@ fun HomeScreen(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.fitlife_icon_1792717695929),
+                    painter = painterResource(id = R.drawable.fitlife_skyblue_icon_1792774391534),
                     contentDescription = "Logo",
                     modifier = Modifier
                         .size(38.dp)
@@ -100,32 +103,73 @@ fun HomeScreen(
                 Column {
                     Text(
                         text = "FitLife Pro",
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = TextPrimary
                     )
                     Text(
                         text = LanguageStrings.get("tagline", isBangla),
-                        fontSize = 10.sp,
+                        fontSize = 9.sp,
                         color = SkyBlueLight
                     )
                 }
             }
 
-            IconButton(
-                onClick = onNotificationClick,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(SurfaceCard)
-                    .testTag("home_notification_button")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notifications",
-                    tint = TextPrimary,
-                    modifier = Modifier.size(22.dp)
-                )
+            // Quick Actions (1-Click Language & Theme Switcher)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // 1-Click Language Switcher Pill
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color(0xFF0C4A6E))
+                        .border(1.dp, SkyBlueLight.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
+                        .clickable { onToggleLanguage() }
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                        .testTag("one_click_language_toggle")
+                ) {
+                    Text(
+                        text = if (isBangla) "🇧🇩 বাংলা" else "🇬🇧 EN",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+
+                // Theme Mode Switcher Button (Dark / Light / System)
+                IconButton(
+                    onClick = onToggleTheme,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(SurfaceCard)
+                        .border(1.dp, SurfaceBorder, CircleShape)
+                        .testTag("home_theme_toggle_button")
+                ) {
+                    Text(
+                        text = when (themeMode) {
+                            com.example.ui.theme.AppThemeMode.DARK -> "🌙"
+                            com.example.ui.theme.AppThemeMode.LIGHT -> "☀️"
+                            com.example.ui.theme.AppThemeMode.SYSTEM -> "⚙️"
+                        },
+                        fontSize = 15.sp
+                    )
+                }
+
+                IconButton(
+                    onClick = onNotificationClick,
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
+                        .background(SurfaceCard)
+                        .testTag("home_notification_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "Notifications",
+                        tint = TextPrimary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
 

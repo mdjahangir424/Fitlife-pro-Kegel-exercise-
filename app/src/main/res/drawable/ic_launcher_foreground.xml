@@ -3,6 +3,6 @@
     <item
         android:width="66dp"
         android:height="66dp"
-        android:drawable="@drawable/fitlife_icon_1792717695929"
+        android:drawable="@drawable/fitlife_skyblue_icon_1792774391534"
         android:gravity="center" />
 </layer-list>
