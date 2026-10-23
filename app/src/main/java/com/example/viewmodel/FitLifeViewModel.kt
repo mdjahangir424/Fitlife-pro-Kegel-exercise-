@@ -6,11 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.FitLifeDatabase
 import com.example.data.FitLifeRepository
 import com.example.data.model.ExerciseEntity
+import com.example.data.model.FirestoreUserProfile
 import com.example.data.model.ReminderSettingsEntity
 import com.example.data.model.UserProfileEntity
 import com.example.data.model.WorkoutEntity
 import com.example.data.model.WorkoutHistoryEntity
+import com.example.data.repository.FirestoreRepository
 import com.example.ui.theme.AppThemeMode
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,12 +51,78 @@ enum class Screen {
 class FitLifeViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: FitLifeRepository
+    private var firestoreRepo: FirestoreRepository? = null
+
+    // Cloud sync state
+    private val _cloudSyncStatus = MutableStateFlow("Synced")
+    val cloudSyncStatus: StateFlow<String> = _cloudSyncStatus.asStateFlow()
+
+    private val _currentUserEmail = MutableStateFlow<String?>(null)
+    val currentUserEmail: StateFlow<String?> = _currentUserEmail.asStateFlow()
 
     init {
         val database = FitLifeDatabase.getDatabase(application)
         repository = FitLifeRepository(database)
         viewModelScope.launch {
             repository.seedInitialDataIfEmpty()
+        }
+
+        // Initialize Firestore repository if already authenticated
+        val currentFirebaseUser = Firebase.auth.currentUser
+        if (currentFirebaseUser != null) {
+            onAuthStateChanged(currentFirebaseUser)
+        }
+    }
+
+    fun onAuthStateChanged(user: FirebaseUser?) {
+        if (user != null) {
+            _currentUserEmail.value = user.email ?: user.displayName ?: "Google User"
+            val repo = FirestoreRepository(getApplication())
+            firestoreRepo = repo
+            _cloudSyncStatus.value = "Synced"
+
+            // Observe and sync user profile with Firestore
+            viewModelScope.launch {
+                try {
+                    repo.observeUserProfile().collect { cloudProfile ->
+                        if (cloudProfile != null) {
+                            repository.saveProfile(
+                                UserProfileEntity(
+                                    id = 1,
+                                    name = cloudProfile.name.ifEmpty { "মোঃ জাহাঙ্গীর আলম" },
+                                    ageRange = cloudProfile.ageRange.ifEmpty { "25 - 35" },
+                                    experienceLevel = cloudProfile.experienceLevel.ifEmpty { "Beginner" },
+                                    goal = cloudProfile.goal.ifEmpty { "General Fitness" },
+                                    language = cloudProfile.language.ifEmpty { "bn" },
+                                    hasCompletedOnboarding = cloudProfile.hasCompletedOnboarding
+                                )
+                            )
+                        } else {
+                            // Upload local profile to Firestore
+                            val local = repository.userProfile.stateIn(viewModelScope).value
+                            if (local != null) {
+                                repo.saveUserProfile(
+                                    FirestoreUserProfile(
+                                        userId = user.uid,
+                                        name = local.name,
+                                        ageRange = local.ageRange,
+                                        experienceLevel = local.experienceLevel,
+                                        goal = local.goal,
+                                        language = local.language,
+                                        hasCompletedOnboarding = local.hasCompletedOnboarding
+                                    )
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    _cloudSyncStatus.value = "Offline"
+                }
+            }
+        } else {
+            _currentUserEmail.value = null
+            firestoreRepo = null
+            _cloudSyncStatus.value = "Signed Out"
         }
     }
 
@@ -150,68 +221,53 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
     private val _categorySearch = MutableStateFlow("")
     val categorySearch: StateFlow<String> = _categorySearch.asStateFlow()
 
+    fun setCategorySearch(query: String) {
+        _categorySearch.value = query
+    }
+
     private var timerJob: Job? = null
 
     fun navigateTo(screen: Screen, addToBackStack: Boolean = true) {
-        if (addToBackStack && _currentScreen.value != screen) {
+        if (addToBackStack) {
             screenBackStack.add(_currentScreen.value)
         }
         _currentScreen.value = screen
     }
 
     fun navigateBack(): Boolean {
-        if (screenBackStack.isNotEmpty()) {
-            _currentScreen.value = screenBackStack.removeAt(screenBackStack.size - 1)
-            return true
-        } else if (_currentScreen.value != Screen.HOME) {
-            _currentScreen.value = Screen.HOME
-            return true
+        return if (screenBackStack.isNotEmpty()) {
+            val previous = screenBackStack.removeAt(screenBackStack.size - 1)
+            _currentScreen.value = previous
+            true
+        } else {
+            false
         }
-        return false
-    }
-
-    fun setCategorySearch(query: String) {
-        _categorySearch.value = query
     }
 
     fun selectWorkout(workout: WorkoutEntity) {
         _selectedWorkout.value = workout
         viewModelScope.launch {
-            val exercises = repository.getExercisesForWorkoutOnce(workout.id)
-            _selectedWorkoutExercises.value = exercises
+            repository.getExercisesForWorkout(workout.id).collect { list ->
+                _selectedWorkoutExercises.value = list
+            }
         }
     }
 
     fun startWorkoutSession(workout: WorkoutEntity) {
         selectWorkout(workout)
         viewModelScope.launch {
-            val exercises = repository.getExercisesForWorkoutOnce(workout.id)
-            if (exercises.isNotEmpty()) {
-                _selectedWorkoutExercises.value = exercises
-                _currentExerciseIndex.value = 0
-                val firstEx = exercises[0]
-                _timerSeconds.value = firstEx.durationSec
-                _totalExerciseSeconds.value = firstEx.durationSec
-                _isPaused.value = false
-                navigateTo(Screen.ACTIVE_WORKOUT)
-                startActiveExerciseTimer()
-            }
-        }
-    }
-
-    private fun startActiveExerciseTimer() {
-        timerJob?.cancel()
-        timerJob = viewModelScope.launch {
-            while (_timerSeconds.value > 0) {
-                if (!_isPaused.value) {
-                    delay(1000)
-                    _timerSeconds.value -= 1
-                } else {
-                    delay(300)
+            repository.getExercisesForWorkout(workout.id).collect { list ->
+                if (list.isNotEmpty()) {
+                    _selectedWorkoutExercises.value = list
+                    _currentExerciseIndex.value = 0
+                    val firstEx = list[0]
+                    _timerSeconds.value = firstEx.durationSec
+                    _totalExerciseSeconds.value = firstEx.durationSec
+                    _isPaused.value = false
+                    navigateTo(Screen.ACTIVE_WORKOUT, addToBackStack = false)
+                    startActiveExerciseTimer()
                 }
             }
-            // Finished current exercise
-            onCurrentExerciseFinished()
         }
     }
 
@@ -220,22 +276,38 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun skipCurrentExercise() {
-        onCurrentExerciseFinished()
-    }
-
-    private fun onCurrentExerciseFinished() {
         timerJob?.cancel()
         val nextIndex = _currentExerciseIndex.value + 1
         val exercises = _selectedWorkoutExercises.value
         if (nextIndex < exercises.size) {
-            // Show rest screen
-            val currentEx = exercises[_currentExerciseIndex.value]
-            _restSeconds.value = currentEx.restSec
+            _restSeconds.value = 15
             navigateTo(Screen.REST_TIMER, addToBackStack = false)
             startRestTimer(nextIndex)
         } else {
-            // Workout finished completely!
             finishWorkoutSession()
+        }
+    }
+
+    private fun startActiveExerciseTimer() {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
+            while (_timerSeconds.value > 0) {
+                delay(1000)
+                if (!_isPaused.value) {
+                    _timerSeconds.value -= 1
+                }
+            }
+            // Exercise complete, go to rest or finish
+            val nextIndex = _currentExerciseIndex.value + 1
+            val exercises = _selectedWorkoutExercises.value
+            if (nextIndex < exercises.size) {
+                val currentEx = exercises[_currentExerciseIndex.value]
+                _restSeconds.value = currentEx.restSec
+                navigateTo(Screen.REST_TIMER, addToBackStack = false)
+                startRestTimer(nextIndex)
+            } else {
+                finishWorkoutSession()
+            }
         }
     }
 
@@ -285,6 +357,7 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
 
         viewModelScope.launch {
             workout?.let {
+                // Save locally to Room
                 repository.logCompletedWorkout(
                     workoutId = it.id,
                     titleBn = it.titleBn,
@@ -294,6 +367,19 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
                     totalExercises = exCount,
                     calories = calories
                 )
+
+                // Sync to Firestore Cloud
+                firestoreRepo?.let { fRepo ->
+                    fRepo.addWorkoutHistory(
+                        workoutId = it.id,
+                        workoutTitleBn = it.titleBn,
+                        workoutTitleEn = it.titleEn,
+                        durationMinutes = duration.toLong(),
+                        exercisesCompleted = exCount.toLong(),
+                        totalExercises = exCount.toLong(),
+                        caloriesBurned = calories.toLong()
+                    )
+                }
             }
         }
         navigateTo(Screen.WORKOUT_COMPLETION, addToBackStack = false)
@@ -302,6 +388,10 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
     fun toggleExerciseFavorite(exerciseId: String, currentFav: Boolean) {
         viewModelScope.launch {
             repository.toggleFavoriteExercise(exerciseId, !currentFav)
+            // Sync to Firestore Cloud
+            firestoreRepo?.let { fRepo ->
+                fRepo.toggleFavorite(exerciseId, "পেলভিক কেগেল এক্সারসাইজ", "Pelvic Kegel Exercise")
+            }
         }
     }
 
@@ -324,6 +414,22 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
                     hasCompletedOnboarding = true
                 )
             )
+
+            // Sync to Firestore
+            firestoreRepo?.let { fRepo ->
+                val uid = fRepo.currentUserId ?: return@launch
+                fRepo.saveUserProfile(
+                    FirestoreUserProfile(
+                        userId = uid,
+                        name = name,
+                        ageRange = age,
+                        experienceLevel = exp,
+                        goal = goal,
+                        language = lang,
+                        hasCompletedOnboarding = true
+                    )
+                )
+            }
         }
     }
 
@@ -334,6 +440,23 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
                 repository.saveProfile(curr.copy(language = lang))
             } else {
                 repository.saveProfile(UserProfileEntity(id = 1, language = lang))
+            }
+
+            // Sync to Firestore
+            firestoreRepo?.let { fRepo ->
+                val uid = fRepo.currentUserId ?: return@launch
+                val currProfile = curr ?: UserProfileEntity(id = 1, language = lang)
+                fRepo.saveUserProfile(
+                    FirestoreUserProfile(
+                        userId = uid,
+                        name = currProfile.name,
+                        ageRange = currProfile.ageRange,
+                        experienceLevel = currProfile.experienceLevel,
+                        goal = currProfile.goal,
+                        language = lang,
+                        hasCompletedOnboarding = currProfile.hasCompletedOnboarding
+                    )
+                )
             }
         }
     }
@@ -359,7 +482,8 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
 
     fun generateDatabaseExport() {
         viewModelScope.launch {
-            _exportedJson.value = repository.exportDatabaseToJson()
+            val json = repository.exportAllDataAsJson()
+            _exportedJson.value = json
         }
     }
 }

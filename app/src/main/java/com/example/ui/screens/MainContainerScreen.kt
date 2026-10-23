@@ -285,7 +285,8 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         exportedJson = exportedJson,
                         onGenerateExport = { viewModel.generateDatabaseExport() },
                         onChangeLanguageClick = { viewModel.navigateTo(Screen.LANGUAGE_SELECTION) },
-                        onBack = { viewModel.navigateBack() }
+                        onBack = { viewModel.navigateBack() },
+                        onSignOut = { viewModel.onAuthStateChanged(null) }
                     )
                 }
 

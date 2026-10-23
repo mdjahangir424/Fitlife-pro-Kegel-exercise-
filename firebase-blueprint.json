@@ -1,0 +1,158 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with language and fitness preferences",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated user's Google UID"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the user"
+        },
+        "ageRange": {
+          "type": "string",
+          "description": "Age group category"
+        },
+        "experienceLevel": {
+          "type": "string",
+          "description": "User experience level"
+        },
+        "goal": {
+          "type": "string",
+          "description": "Fitness target goal"
+        },
+        "language": {
+          "type": "string",
+          "description": "Preferred language (bn or en)"
+        },
+        "hasCompletedOnboarding": {
+          "type": "boolean",
+          "description": "Whether onboarding has been completed"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Document creation server timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Document modification server timestamp"
+        }
+      },
+      "required": ["userId", "name", "language", "createdAt"]
+    },
+    "WorkoutHistoryItem": {
+      "title": "WorkoutHistoryItem",
+      "description": "Completed workout session log",
+      "type": "object",
+      "properties": {
+        "historyId": {
+          "type": "string",
+          "description": "Unique history entry ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Authenticated user's Google UID"
+        },
+        "workoutId": {
+          "type": "string",
+          "description": "Reference to workout ID"
+        },
+        "workoutTitleBn": {
+          "type": "string",
+          "description": "Bangla title of the workout"
+        },
+        "workoutTitleEn": {
+          "type": "string",
+          "description": "English title of the workout"
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "description": "Duration spent in minutes"
+        },
+        "exercisesCompleted": {
+          "type": "integer",
+          "description": "Count of exercises finished"
+        },
+        "totalExercises": {
+          "type": "integer",
+          "description": "Total planned exercises"
+        },
+        "caloriesBurned": {
+          "type": "integer",
+          "description": "Estimated calories burned"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Session creation server timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Session modification server timestamp"
+        }
+      },
+      "required": ["historyId", "userId", "workoutId", "durationMinutes", "createdAt"]
+    },
+    "FavoriteItem": {
+      "title": "FavoriteItem",
+      "description": "Saved favorite exercise record",
+      "type": "object",
+      "properties": {
+        "exerciseId": {
+          "type": "string",
+          "description": "Exercise identifier"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Authenticated user's Google UID"
+        },
+        "titleBn": {
+          "type": "string",
+          "description": "Bangla exercise title"
+        },
+        "titleEn": {
+          "type": "string",
+          "description": "English exercise title"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Modification timestamp"
+        }
+      },
+      "required": ["exerciseId", "userId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "User profile with language and fitness goals"
+    },
+    "/users/{userId}/workout_history/{historyId}": {
+      "schema": {
+        "$ref": "#/entities/WorkoutHistoryItem"
+      },
+      "description": "Per-user workout completion history entries"
+    },
+    "/users/{userId}/favorites/{exerciseId}": {
+      "schema": {
+        "$ref": "#/entities/FavoriteItem"
+      },
+      "description": "Per-user favorited exercises"
+    }
+  }
+}

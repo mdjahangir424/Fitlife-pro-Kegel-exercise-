@@ -1,0 +1,137 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUserProfile(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             (!('ageRange' in data) || (data.ageRange is string && data.ageRange.size() <= 50)) &&
+             (!('experienceLevel' in data) || (data.experienceLevel is string && data.experienceLevel.size() <= 50)) &&
+             (!('goal' in data) || (data.goal is string && data.goal.size() <= 100)) &&
+             data.language is string && (data.language == 'bn' || data.language == 'en') &&
+             (!('hasCompletedOnboarding' in data) || data.hasCompletedOnboarding is bool) &&
+             (!('updatedAt' in data) || (data.updatedAt is timestamp && data.updatedAt <= request.time));
+    }
+
+    function isValidWorkoutHistoryItem(data) {
+      return data.historyId is string && data.historyId.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.workoutId is string && data.workoutId.size() <= 100 &&
+             (!('workoutTitleBn' in data) || (data.workoutTitleBn is string && data.workoutTitleBn.size() <= 200)) &&
+             (!('workoutTitleEn' in data) || (data.workoutTitleEn is string && data.workoutTitleEn.size() <= 200)) &&
+             data.durationMinutes is int && data.durationMinutes >= 0 && data.durationMinutes <= 1440 &&
+             (!('exercisesCompleted' in data) || (data.exercisesCompleted is int && data.exercisesCompleted >= 0 && data.exercisesCompleted <= 500)) &&
+             (!('totalExercises' in data) || (data.totalExercises is int && data.totalExercises >= 0 && data.totalExercises <= 500)) &&
+             (!('caloriesBurned' in data) || (data.caloriesBurned is int && data.caloriesBurned >= 0 && data.caloriesBurned <= 10000)) &&
+             (!('updatedAt' in data) || (data.updatedAt is timestamp && data.updatedAt <= request.time));
+    }
+
+    function isValidFavoriteItem(data) {
+      return data.exerciseId is string && data.exerciseId.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             (!('titleBn' in data) || (data.titleBn is string && data.titleBn.size() <= 200)) &&
+             (!('titleEn' in data) || (data.titleEn is string && data.titleEn.size() <= 200)) &&
+             (!('updatedAt' in data) || (data.updatedAt is timestamp && data.updatedAt <= request.time));
+    }
+
+    // User profile document
+    match /users/{userId} {
+      allow get: if isSignedIn() && request.auth.uid == userId;
+      allow list: if false;
+
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       incoming().userId == request.auth.uid &&
+                       incoming().keys().hasAll(['userId', 'name', 'language', 'createdAt']) &&
+                       incoming().keys().hasOnly(['userId', 'name', 'ageRange', 'experienceLevel', 'goal', 'language', 'hasCompletedOnboarding', 'createdAt', 'updatedAt']) &&
+                       incoming().createdAt is timestamp &&
+                       incoming().createdAt <= request.time &&
+                       isValidUserProfile(incoming());
+
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidUserProfile(incoming()) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['name', 'ageRange', 'experienceLevel', 'goal', 'language', 'hasCompletedOnboarding', 'updatedAt']);
+
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+
+      // Subcollection: Workout History
+      match /workout_history/{historyId} {
+        allow get, list: if isSignedIn() && request.auth.uid == userId;
+
+        allow create: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         isValidId(historyId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().historyId == historyId &&
+                         incoming().keys().hasAll(['historyId', 'userId', 'workoutId', 'durationMinutes', 'createdAt']) &&
+                         incoming().keys().hasOnly(['historyId', 'userId', 'workoutId', 'workoutTitleBn', 'workoutTitleEn', 'durationMinutes', 'exercisesCompleted', 'totalExercises', 'caloriesBurned', 'createdAt', 'updatedAt']) &&
+                         incoming().createdAt is timestamp &&
+                         incoming().createdAt <= request.time &&
+                         isValidWorkoutHistoryItem(incoming());
+
+        allow update: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         isValidId(historyId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().historyId == existing().historyId &&
+                         incoming().createdAt == existing().createdAt &&
+                         isValidWorkoutHistoryItem(incoming()) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['workoutTitleBn', 'workoutTitleEn', 'durationMinutes', 'exercisesCompleted', 'totalExercises', 'caloriesBurned', 'updatedAt']);
+
+        allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(historyId);
+      }
+
+      // Subcollection: Favorites
+      match /favorites/{exerciseId} {
+        allow get, list: if isSignedIn() && request.auth.uid == userId;
+
+        allow create: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         isValidId(exerciseId) &&
+                         incoming().userId == request.auth.uid &&
+                         incoming().exerciseId == exerciseId &&
+                         incoming().keys().hasAll(['exerciseId', 'userId', 'createdAt']) &&
+                         incoming().keys().hasOnly(['exerciseId', 'userId', 'titleBn', 'titleEn', 'createdAt', 'updatedAt']) &&
+                         incoming().createdAt is timestamp &&
+                         incoming().createdAt <= request.time &&
+                         isValidFavoriteItem(incoming());
+
+        allow update: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         isValidId(exerciseId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().exerciseId == existing().exerciseId &&
+                         incoming().createdAt == existing().createdAt &&
+                         isValidFavoriteItem(incoming()) &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['titleBn', 'titleEn', 'updatedAt']);
+
+        allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(exerciseId);
+      }
+    }
+  }
+}
