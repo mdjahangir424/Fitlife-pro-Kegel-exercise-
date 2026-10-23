@@ -46,6 +46,7 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
     val allWorkouts by viewModel.allWorkouts.collectAsState()
     val selectedWorkout by viewModel.selectedWorkout.collectAsState()
     val selectedExercises by viewModel.selectedWorkoutExercises.collectAsState()
+    val videoExercise by viewModel.videoExercise.collectAsState()
 
     val currentExIndex by viewModel.currentExerciseIndex.collectAsState()
     val timerSec by viewModel.timerSeconds.collectAsState()
@@ -288,7 +289,27 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         onBack = { viewModel.navigateBack() },
                         onStartWorkout = { workout ->
                             viewModel.startWorkoutSession(workout)
+                        },
+                        onExerciseClick = { ex ->
+                            viewModel.openVideoPlayer(ex)
                         }
+                    )
+                }
+
+                Screen.EXERCISE_VIDEO_PLAYER -> {
+                    ExerciseVideoPlayerScreen(
+                        exercise = videoExercise,
+                        isBangla = isBangla,
+                        onNextExercise = {
+                            val list = selectedExercises
+                            val currIdx = list.indexOfFirst { it.id == videoExercise?.id }
+                            if (currIdx >= 0 && currIdx + 1 < list.size) {
+                                viewModel.openVideoPlayer(list[currIdx + 1])
+                            } else {
+                                viewModel.navigateBack()
+                            }
+                        },
+                        onBack = { viewModel.navigateBack() }
                     )
                 }
 
@@ -307,7 +328,8 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         onPauseToggle = { viewModel.togglePauseTimer() },
                         onSkip = { viewModel.skipCurrentExercise() },
                         onFinish = { viewModel.finishWorkoutSession() },
-                        onBack = { viewModel.navigateBack() }
+                        onBack = { viewModel.navigateBack() },
+                        onOpenVideo = { currentEx?.let { viewModel.openVideoPlayer(it) } }
                     )
                 }
 
@@ -359,7 +381,8 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         onDeleteDownload = { exId ->
                             viewModel.toggleExerciseDownload(exId, true)
                         },
-                        onBack = { viewModel.navigateBack() }
+                        onBack = { viewModel.navigateBack() },
+                        onExerciseClick = { ex -> viewModel.openVideoPlayer(ex) }
                     )
                 }
 

@@ -109,7 +109,7 @@ fun LanguageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(if (isBnSelected) Color(0xFF152E23) else SurfaceCard)
+                    .background(if (isBnSelected) Color(0xFF0C4A6E) else SurfaceCard)
                     .border(
                         width = if (isBnSelected) 2.dp else 1.dp,
                         color = if (isBnSelected) NeonEmerald else Color(0xFF30363D),
@@ -160,7 +160,7 @@ fun LanguageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(if (isEnSelected) Color(0xFF152E23) else SurfaceCard)
+                    .background(if (isEnSelected) Color(0xFF0C4A6E) else SurfaceCard)
                     .border(
                         width = if (isEnSelected) 2.dp else 1.dp,
                         color = if (isEnSelected) NeonEmerald else Color(0xFF30363D),

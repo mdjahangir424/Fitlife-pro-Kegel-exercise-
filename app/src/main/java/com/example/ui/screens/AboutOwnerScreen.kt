@@ -171,7 +171,7 @@ fun AboutOwnerScreen(
                 .fillMaxWidth()
                 .border(1.dp, NeonEmerald.copy(alpha = 0.6f), RoundedCornerShape(18.dp)),
             shape = RoundedCornerShape(18.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF14241C))
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF0C243B))
         ) {
             Column(modifier = Modifier.padding(18.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -303,7 +303,7 @@ fun AboutOwnerScreen(
                         .testTag("export_database_btn"),
                     shape = RoundedCornerShape(22.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1B3828),
+                        containerColor = Color(0xFF0C4A6E),
                         contentColor = NeonEmerald
                     )
                 ) {

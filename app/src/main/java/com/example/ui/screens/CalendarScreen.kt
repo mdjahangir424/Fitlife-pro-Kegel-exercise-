@@ -169,7 +169,7 @@ fun CalendarScreen(
                                 .background(
                                     when {
                                         isSelected -> NeonEmerald
-                                        isCompleted -> Color(0xFF1E3A2B)
+                                        isCompleted -> Color(0xFF0C4A6E)
                                         else -> Color(0xFF273140)
                                     }
                                 ),
@@ -216,7 +216,7 @@ fun CalendarScreen(
                     modifier = Modifier
                         .size(46.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF193828)),
+                        .background(Color(0xFF0C4A6E)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -231,13 +231,13 @@ fun CalendarScreen(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (isBangla) "Full Body Workout" else "Full Body Workout",
+                        text = if (isBangla) "১০ ক্যাগেল এক্সারসাইজ রুটিন" else "10 Pelvic Kegel Routine",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
                     Text(
-                        text = "30 ${LanguageStrings.get("minutes", isBangla)} • 12 ${LanguageStrings.get("exercises", isBangla)}",
+                        text = "20 ${LanguageStrings.get("minutes", isBangla)} • 10 ${LanguageStrings.get("exercises", isBangla)}",
                         fontSize = 12.sp,
                         color = TextMuted
                     )
@@ -246,7 +246,7 @@ fun CalendarScreen(
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .background(Color(0xFF1B3828))
+                        .background(Color(0xFF0C4A6E))
                         .border(1.dp, NeonEmerald, RoundedCornerShape(12.dp))
                         .padding(horizontal = 10.dp, vertical = 6.dp)
                 ) {

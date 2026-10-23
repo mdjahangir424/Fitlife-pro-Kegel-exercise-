@@ -80,6 +80,7 @@ class FitLifeRepository(private val database: FitLifeDatabase) {
     suspend fun exportDatabaseToJson(): String = withContext(Dispatchers.IO) {
         val root = JSONObject()
         root.put("appName", "FitLife Pro")
+        root.put("category", "Pelvic Floor & Kegel Exercises")
         root.put("owner", "Md Jahangir Alam")
         root.put("ownerEmail", "mdjahangiralam2528@gmail.com")
         root.put("exportTimestamp", System.currentTimeMillis())
@@ -124,323 +125,278 @@ class FitLifeRepository(private val database: FitLifeDatabase) {
                     name = "জাহাঙ্গীর আলম",
                     ageRange = "25 - 35",
                     experienceLevel = "Beginner",
-                    goal = "General Fitness",
+                    goal = "Pelvic Floor Strength",
                     language = "bn",
                     hasCompletedOnboarding = true
                 )
             )
         }
 
-        val workouts = database.workoutDao().getWorkoutById("wb_full_body")
-        if (workouts == null) {
-            val defaultWorkouts = listOf(
-                WorkoutEntity(
-                    id = "wb_full_body",
-                    titleBn = "সম্পূর্ণ শরীর ওয়ার্কআউট",
-                    titleEn = "Full Body Workout",
-                    category = "full_body",
-                    durationMinutes = 30,
-                    exerciseCount = 12,
-                    levelBn = "শুরু করছি (Beginner)",
-                    levelEn = "Beginner",
-                    descriptionBn = "সারা শরীরের জন্য একটি সম্পূর্ণ ওয়ার্কআউট প্রোগ্রাম। শক্তি, সহনশীলতা ও ফিটনেস বাড়ান।",
-                    descriptionEn = "A complete full-body routine designed to build strength, endurance, and overall conditioning.",
-                    colorHex = "#FF6D00"
-                ),
-                WorkoutEntity(
-                    id = "wb_abs",
-                    titleBn = "পেট ও কোর ওয়ার্কআউট",
-                    titleEn = "Abs & Core",
-                    category = "abs",
-                    durationMinutes = 20,
-                    exerciseCount = 10,
-                    levelBn = "মধ্যবর্তী",
-                    levelEn = "Intermediate",
-                    descriptionBn = "পেটের পেশি মজবুত করতে এবং কোর স্টেবিলিটি বাড়াতে কার্যকরী আসন ও ব্যায়াম।",
-                    descriptionEn = "Sculpt and strengthen your midsection with targeted core stability movements.",
-                    colorHex = "#00B0FF"
-                ),
-                WorkoutEntity(
-                    id = "wb_chest",
-                    titleBn = "বুকের ওয়ার্কআউট",
-                    titleEn = "Chest Workout",
-                    category = "chest",
-                    durationMinutes = 25,
-                    exerciseCount = 8,
-                    levelBn = "শুরু করছি",
-                    levelEn = "Beginner",
-                    descriptionBn = "বুকের শক্তি ও আকার বৃদ্ধির জন্য পুশ-আপের বিভিন্ন বৈচিত্র্য।",
-                    descriptionEn = "Target upper and lower pectoral muscles with progressive push variations.",
-                    colorHex = "#FF5252"
-                ),
-                WorkoutEntity(
-                    id = "wb_arms",
-                    titleBn = "বাহুর ওয়ার্কআউট",
-                    titleEn = "Arms Workout",
-                    category = "arms",
-                    durationMinutes = 20,
-                    exerciseCount = 8,
-                    levelBn = "সব স্তর",
-                    levelEn = "All Levels",
-                    descriptionBn = "বাইসেপ ও ট্রাইসেপের শক্তি ও টোন বাড়ানোর ব্যায়াম।",
-                    descriptionEn = "Strengthen and tone your biceps, triceps, and forearms with bodyweight mastery.",
-                    colorHex = "#00C853"
-                ),
-                WorkoutEntity(
-                    id = "wb_shoulders",
-                    titleBn = "কাঁধের ওয়ার্কআউট",
-                    titleEn = "Shoulders Workout",
-                    category = "shoulders",
-                    durationMinutes = 25,
-                    exerciseCount = 8,
-                    levelBn = "মধ্যবর্তী",
-                    levelEn = "Intermediate",
-                    descriptionBn = "প্রশস্ত ও শক্তিশালী কাঁধ গঠনের জন্য ডেল্টয়েড ব্যায়াম।",
-                    descriptionEn = "Improve shoulder stability and develop sculpted deltoids with focused sets.",
-                    colorHex = "#0091EA"
-                ),
-                WorkoutEntity(
-                    id = "wb_back",
-                    titleBn = "পিঠের ওয়ার্কআউট",
-                    titleEn = "Back Workout",
-                    category = "back",
-                    durationMinutes = 25,
-                    exerciseCount = 8,
-                    levelBn = "শুরু করছি",
-                    levelEn = "Beginner",
-                    descriptionBn = "পিঠের ব্যথা দূর ও মেরুদণ্ড সোজা রাখার জন্য ল্যাট ও ট্র্যাপ ব্যায়াম।",
-                    descriptionEn = "Strengthen posture and back muscles to relieve tension and build upper-body power.",
-                    colorHex = "#304FFE"
-                ),
-                WorkoutEntity(
-                    id = "wb_legs",
-                    titleBn = "পায়ের ওয়ার্কআউট",
-                    titleEn = "Legs Workout",
-                    category = "legs",
-                    durationMinutes = 30,
-                    exerciseCount = 10,
-                    levelBn = "শুরু করছি",
-                    levelEn = "Beginner",
-                    descriptionBn = "কোয়াড, হ্যামস্ট্রিং এবং কাফ পেশির শক্তির জন্য কার্যকরী স্কোয়াট ও লাঞ্জেস।",
-                    descriptionEn = "Build explosive lower-body power and balance with functional squats and lunges.",
-                    colorHex = "#7C4DFF"
-                ),
-                WorkoutEntity(
-                    id = "wb_stretching",
-                    titleBn = "স্ট্রেচিং ও রিল্যাক্স",
-                    titleEn = "Stretching & Cool Down",
-                    category = "stretching",
-                    durationMinutes = 15,
-                    exerciseCount = 6,
-                    levelBn = "সব স্তর",
-                    levelEn = "All Levels",
-                    descriptionBn = "ব্যায়ামের পর শরীরকে শিথিল ও নমনীয় করার জন্য স্ট্রেচিং।",
-                    descriptionEn = "Improve flexibility, release lactic acid, and prevent stiffness with relaxing stretches.",
-                    colorHex = "#00B4D8"
-                )
+        // Single Category: Pelvic Kegel Exercise
+        val kegelWorkouts = listOf(
+            WorkoutEntity(
+                id = "wb_kegel_main",
+                titleBn = "১০ ক্যাগেল এক্সারসাইজ রুটিন",
+                titleEn = "10 Pelvic Kegel Exercises Routine",
+                category = "pelvic_kegel",
+                durationMinutes = 20,
+                exerciseCount = 10,
+                levelBn = "সব স্তর (All Levels)",
+                levelEn = "All Levels",
+                descriptionBn = "পেলভিক ফ্লোর পেশি মজবুত, ব্লাডার নিয়ন্ত্রণ এবং কোর সক্ষমতা বৃদ্ধির জন্য ১০টি বৈজ্ঞানিক ক্যাগেল আসন ও ব্যায়াম।",
+                descriptionEn = "10 medically proven pelvic floor & Kegel exercises designed to strengthen pelvic muscles, core stability, and control.",
+                colorHex = "#00B4D8"
+            ),
+            WorkoutEntity(
+                id = "wb_kegel_quick",
+                titleBn = "দ্রুত পেলভিক শক্তি ও ফ্লিক",
+                titleEn = "Quick Pelvic Floor Power",
+                category = "pelvic_kegel",
+                durationMinutes = 12,
+                exerciseCount = 5,
+                levelBn = "শুরু করছি (Beginner)",
+                levelEn = "Beginner",
+                descriptionBn = "কম সময়ে পেলভিক পেশির দ্রুত সংকোচন ও শক্তি বৃদ্ধির কার্যকরী সেশন।",
+                descriptionEn = "A fast and effective session focusing on rapid contraction and pelvic muscle activation.",
+                colorHex = "#38BDF8"
+            ),
+            WorkoutEntity(
+                id = "wb_kegel_release",
+                titleBn = "পেলভিক রিল্যাক্সেশন ও স্ট্রেচ",
+                titleEn = "Pelvic Release & Flexibility",
+                category = "pelvic_kegel",
+                durationMinutes = 15,
+                exerciseCount = 5,
+                levelBn = "নরম ও রিল্যাক্স",
+                levelEn = "Relax & Restore",
+                descriptionBn = "পেলভিক পেশির টান দূর করা এবং গভীর শ্বাসের সাথে শিথিলতা আনয়নের বিশেষ আসন।",
+                descriptionEn = "Gentle stretching and diaphragmatic breathing routines to release tension and improve elasticity.",
+                colorHex = "#0284C7"
             )
-            database.workoutDao().insertAll(defaultWorkouts)
+        )
+        database.workoutDao().insertAll(kegelWorkouts)
 
-            // Seed exercises for full body
-            val fullBodyExercises = listOf(
-                ExerciseEntity(
-                    id = "ex_pushup",
-                    workoutId = "wb_full_body",
-                    titleBn = "Push Up (বুক ডাউন)",
-                    titleEn = "Push Up",
-                    targetBn = "১২ বার",
-                    targetEn = "12 reps",
-                    durationSec = 45,
-                    restSec = 30,
-                    animationType = "push_up",
-                    instructionsBn = "হাত কাঁধের সমান্তরালে রাখুন, শরীর সোজা রেখে বুক মেঝে পর্যন্ত নামান ও উপরে উঠুন।",
-                    instructionsEn = "Keep your body in a straight plank line. Lower chest to floor and push back up firmly.",
-                    isFavorite = true,
-                    isDownloaded = true,
-                    downloadSizeMb = 12.5
-                ),
-                ExerciseEntity(
-                    id = "ex_squat",
-                    workoutId = "wb_full_body",
-                    titleBn = "Squat (স্কোয়াট)",
-                    titleEn = "Squat",
-                    targetBn = "১৫ বার",
-                    targetEn = "15 reps",
-                    durationSec = 45,
-                    restSec = 25,
-                    animationType = "squat",
-                    instructionsBn = "পা দুটি কাঁধ বরাবর ফাঁক করে নিতম্ব পেছনে নিয়ে বসুন, হাঁটু যাতে পায়ের আঙুল না ছাড়ায়।",
-                    instructionsEn = "Stand shoulder-width apart. Push hips back and lower until thighs are parallel to ground.",
-                    isFavorite = true,
-                    isDownloaded = true,
-                    downloadSizeMb = 15.2
-                ),
-                ExerciseEntity(
-                    id = "ex_plank",
-                    workoutId = "wb_full_body",
-                    titleBn = "Plank (প্ল্যাঙ্ক)",
-                    titleEn = "Plank",
-                    targetBn = "৪০ সেকেন্ড",
-                    targetEn = "40 seconds",
-                    durationSec = 40,
-                    restSec = 30,
-                    animationType = "plank",
-                    instructionsBn = "কনুই ও পায়ের আঙুলের ওপর ভর দিয়ে শরীর সোজা রেখে কোর শক্ত করে ধরে রাখুন।",
-                    instructionsEn = "Rest on forearms and toes. Keep your spine neutral and engage your core tightly.",
-                    isFavorite = true,
-                    isDownloaded = true,
-                    downloadSizeMb = 8.7
-                ),
-                ExerciseEntity(
-                    id = "ex_mountain",
-                    workoutId = "wb_full_body",
-                    titleBn = "Mountain Climber (মাউন্টেন ক্লাইম্বার)",
-                    titleEn = "Mountain Climber",
-                    targetBn = "৩০ সেকেন্ড",
-                    targetEn = "30 seconds",
-                    durationSec = 30,
-                    restSec = 25,
-                    animationType = "mountain_climber",
-                    instructionsBn = "পুশ-আপ অবস্থানে থেকে পর্যায়ক্রমে হাঁটু বুকের কাছে দ্রুত টেনে আনুন।",
-                    instructionsEn = "From high plank, rapidly drive knees forward toward chest in alternating running rhythm.",
-                    isFavorite = true,
-                    isDownloaded = true,
-                    downloadSizeMb = 14.1
-                ),
-                ExerciseEntity(
-                    id = "ex_lunges",
-                    workoutId = "wb_full_body",
-                    titleBn = "Lunge (লাঞ্জেস)",
-                    titleEn = "Forward Lunges",
-                    targetBn = "১২ বার (প্রতি পা)",
-                    targetEn = "12 reps/leg",
-                    durationSec = 45,
-                    restSec = 25,
-                    animationType = "lunges",
-                    instructionsBn = "এক পা সামনে বাড়িয়ে হাঁটু ৯০ ডিগ্রি কোণে বাঁকিয়ে বসুন, তারপর আগের অবস্থানে ফিরে আসুন।",
-                    instructionsEn = "Step forward with one leg, lowering hips until both knees bend at a 90-degree angle.",
-                    isFavorite = false,
-                    isDownloaded = true,
-                    downloadSizeMb = 12.1
-                ),
-                ExerciseEntity(
-                    id = "ex_jumping",
-                    workoutId = "wb_full_body",
-                    titleBn = "Jumping Jacks (জাম্পিং জ্যাক)",
-                    titleEn = "Jumping Jacks",
-                    targetBn = "৪৫ সেকেন্ড",
-                    targetEn = "45 seconds",
-                    durationSec = 45,
-                    restSec = 20,
-                    animationType = "jumping_jacks",
-                    instructionsBn = "লাফিয়ে পা ফাঁক করে হাত মাথার উপর তুলুন এবং পুনরায় স্বাভাবিক অবস্থানে ফিরে আসুন।",
-                    instructionsEn = "Jump feet outward while raising arms overhead, then return to starting position briskly.",
-                    isFavorite = false,
-                    isDownloaded = true,
-                    downloadSizeMb = 9.8
-                ),
-                ExerciseEntity(
-                    id = "ex_crunches",
-                    workoutId = "wb_full_body",
-                    titleBn = "Abdominal Crunches (ক্রাঞ্চেস)",
-                    titleEn = "Abdominal Crunches",
-                    targetBn = "১৫ বার",
-                    targetEn = "15 reps",
-                    durationSec = 40,
-                    restSec = 25,
-                    animationType = "crunches",
-                    instructionsBn = "চিৎ হয়ে শুয়ে হাঁটু ভাঁজ করুন। পেটের শক্তিতে কাঁধ মেঝে থেকে সামান্য উপরে তুলুন।",
-                    instructionsEn = "Lie on back with knees bent. Contract abdominals and lift shoulder blades off mat.",
-                    isFavorite = false,
-                    isDownloaded = true,
-                    downloadSizeMb = 11.0
-                ),
-                ExerciseEntity(
-                    id = "ex_stretching",
-                    workoutId = "wb_full_body",
-                    titleBn = "Cobra Stretch (কোবরা স্ট্রেচ)",
-                    titleEn = "Cobra Stretch",
-                    targetBn = "৩০ সেকেন্ড",
-                    targetEn = "30 seconds",
-                    durationSec = 30,
-                    restSec = 20,
-                    animationType = "stretching",
-                    instructionsBn = "উপুড় হয়ে শুয়ে হাতের তালুতে ভর দিয়ে বুক উপরের দিকে টানটান করুন।",
-                    instructionsEn = "Lie prone and press hands down to gently arch chest upwards, opening spine and chest.",
-                    isFavorite = true,
-                    isDownloaded = true,
-                    downloadSizeMb = 7.5
-                )
+        // 10 Distinct, Medically Proven Pelvic Kegel Exercises with 3D animation keys
+        val tenKegelExercises = listOf(
+            ExerciseEntity(
+                id = "ex_kegel_basic",
+                workoutId = "wb_kegel_main",
+                titleBn = "১. মৌলিক ক্যাগেল সংকোচন ও হোল্ড",
+                titleEn = "1. Basic Kegel Contract & Hold",
+                targetBn = "১০ বার (প্রতিটি ৫-১০ সেকেন্ড)",
+                targetEn = "10 reps (5-10s hold)",
+                durationSec = 45,
+                restSec = 20,
+                animationType = "kegel_basic",
+                instructionsBn = "চিত হয়ে শুয়ে হাঁটু ভাঁজ করুন। পেলভিক ফ্লোর পেশি ওপরের দিকে টেনে শক্ত করে ৫-১০ সেকেন্ড ধরে রাখুন, তারপর ধীরে ধীরে শ্বাস ছেড়ে শিথিল করুন।",
+                instructionsEn = "Lie on back with knees bent. Squeeze and lift pelvic floor muscles, hold for 5-10 seconds, then slowly release and relax.",
+                isFavorite = true,
+                isDownloaded = true,
+                downloadSizeMb = 8.5
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_quick",
+                workoutId = "wb_kegel_main",
+                titleBn = "২. কুইক ফ্লিক ক্যাগেল (দ্রুত সংকোচন)",
+                titleEn = "2. Quick Flick Kegels",
+                targetBn = "১৫ বার দ্রুত ফ্লিক",
+                targetEn = "15 quick pulses",
+                durationSec = 35,
+                restSec = 15,
+                animationType = "kegel_quick_flicks",
+                instructionsBn = "পেলভিক পেশিকে দ্রুত ১ সেকেন্ডের ব্যবধানে সংকুচিত ও অবিলম্বে মুক্ত করুন। এটি পেশির দ্রুত প্রতিক্রিয়া তৈরি করে।",
+                instructionsEn = "Rapidly contract and immediately release pelvic muscles in 1-second pulses to build fast-twitch reflexes.",
+                isFavorite = true,
+                isDownloaded = true,
+                downloadSizeMb = 9.2
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_bridge",
+                workoutId = "wb_kegel_main",
+                titleBn = "৩. গ্লুট ব্রিজ ক্যাগেল লিফট",
+                titleEn = "3. Glute Bridge Kegel",
+                targetBn = "১২ বার",
+                targetEn = "12 reps",
+                durationSec = 45,
+                restSec = 20,
+                animationType = "kegel_glute_bridge",
+                instructionsBn = "নিতম্ব ওপরের দিকে তুলে শরীরকে সেতু বা ব্রিজের মতো করুন। উপরে ওঠার সময় ক্যাগেল পেশি শক্ত করে চেপে ধরুন, নিচে নামার সময় শিথিল করুন।",
+                instructionsEn = "Elevate hips into a bridge while tightly engaging glutes and pelvic floor muscles. Lower smoothly.",
+                isFavorite = true,
+                isDownloaded = true,
+                downloadSizeMb = 10.4
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_butterfly",
+                workoutId = "wb_kegel_main",
+                titleBn = "৪. বাটারফ্লাই পেলভিক স্ট্রেচ",
+                titleEn = "4. Reclined Butterfly Kegel",
+                targetBn = "৪০ সেকেন্ড",
+                targetEn = "40 seconds",
+                durationSec = 40,
+                restSec = 20,
+                animationType = "kegel_butterfly",
+                instructionsBn = "পায়ের তালু দুটি একসাথে স্পর্শ করে হাঁটু দুই পাশে প্রজাপতির ডানার মতো খুলে দিন। গভীর শ্বাস নিয়ে পেলভিক পেশির সম্প্রসারণ অনুভব করুন।",
+                instructionsEn = "Bring soles of feet together allowing knees to fall wide. Take deep belly breaths and rhythmically activate pelvic floor.",
+                isFavorite = true,
+                isDownloaded = true,
+                downloadSizeMb = 7.8
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_cat_cow",
+                workoutId = "wb_kegel_main",
+                titleBn = "৫. ক্যাট-কাউ পেলভিক মুভমেন্ট",
+                titleEn = "5. Cat-Cow Pelvic Movement",
+                targetBn = "১০ চক্র",
+                targetEn = "10 cycles",
+                durationSec = 45,
+                restSec = 15,
+                animationType = "kegel_cat_cow",
+                instructionsBn = "চার পায়ে টেবিলের মতো অবস্থান নিন। পিঠ বাঁকানোর সময় পেলভিক পেশি সংকোচন করুন এবং পেট নামানোর সময় শিথিল করে শ্বাস নিন।",
+                instructionsEn = "On hands and knees, arch spine on exhale with pelvic contraction, then dip spine on inhale with pelvic relaxation.",
+                isFavorite = true,
+                isDownloaded = true,
+                downloadSizeMb = 8.9
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_bird_dog",
+                workoutId = "wb_kegel_main",
+                titleBn = "৬. বার্ড-ডগ পেলভিক ব্রেইস",
+                titleEn = "6. Bird Dog Pelvic Brace",
+                targetBn = "১০ বার (প্রতি পাশ)",
+                targetEn = "10 reps/side",
+                durationSec = 45,
+                restSec = 20,
+                animationType = "kegel_bird_dog",
+                instructionsBn = "বিপরীত হাত ও পা সোজা প্রসারিত করুন। কোর ও পেলভিক পেশি শক্ত রেখে শরীরের ভারসাম্য বজায় রাখুন।",
+                instructionsEn = "Extend opposite arm and leg straight out while bracing core and stabilizing pelvic floor.",
+                isFavorite = false,
+                isDownloaded = true,
+                downloadSizeMb = 11.1
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_squat",
+                workoutId = "wb_kegel_main",
+                titleBn = "৭. ডিপ পেলভিক স্কোয়াট (মালাসন)",
+                titleEn = "7. Deep Pelvic Squat (Malasana)",
+                targetBn = "১২ বার",
+                targetEn = "12 reps",
+                durationSec = 45,
+                restSec = 25,
+                animationType = "kegel_deep_squat",
+                instructionsBn = "পা চওড়া করে নিচে গভীরভাবে বসুন। নিচে নামার সময় পেলভিক ফ্লোর প্রসারিত করুন এবং ওঠার সময় টেনে সংকুচিত করুন।",
+                instructionsEn = "Perform deep wide stance squat. Open pelvic diaphragm at the bottom and lift pelvic floor on the way up.",
+                isFavorite = true,
+                isDownloaded = true,
+                downloadSizeMb = 9.8
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_clamshell",
+                workoutId = "wb_kegel_main",
+                titleBn = "৮. ক্ল্যামশেল পেলভিক স্টেবিলিটি",
+                titleEn = "8. Clamshell Pelvic Stability",
+                targetBn = "১২ বার (প্রতি পাশ)",
+                targetEn = "12 reps/side",
+                durationSec = 40,
+                restSec = 20,
+                animationType = "kegel_clamshell",
+                instructionsBn = "কাত হয়ে শুয়ে হাঁটু ৪৫ ডিগ্রিতে রাখুন। পায়ের পাতা সংযুক্ত রেখে ওপরের হাঁটু ঝিনুকের মতো খুলুন ও পেলভিক অংশ শক্ত রাখুন।",
+                instructionsEn = "Lie on your side with knees at 45 degrees. Open top knee like a clamshell while holding pelvic stability.",
+                isFavorite = false,
+                isDownloaded = true,
+                downloadSizeMb = 8.1
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_dead_bug",
+                workoutId = "wb_kegel_main",
+                titleBn = "৯. ডেড বাগ কোর ও পেলভিক ব্রেইস",
+                titleEn = "9. Dead Bug Pelvic Core",
+                targetBn = "১০ বার (প্রতি পাশ)",
+                targetEn = "10 reps/side",
+                durationSec = 45,
+                restSec = 20,
+                animationType = "kegel_dead_bug",
+                instructionsBn = "পিঠ মেঝের সাথে সম্পূর্ণ সোজা রাখুন। বিপরীত হাত ও পা নামানোর সময় পেলভিক ফ্লোর সংকুচিত করে কোর ধরে রাখুন।",
+                instructionsEn = "Lie on back with arms and knees up. Slowly lower opposite arm and leg while engaging deep pelvic core.",
+                isFavorite = false,
+                isDownloaded = true,
+                downloadSizeMb = 10.2
+            ),
+            ExerciseEntity(
+                id = "ex_kegel_happy_baby",
+                workoutId = "wb_kegel_main",
+                titleBn = "১০. হ্যাপি বেবি পেলভিক রিলিজ",
+                titleEn = "10. Happy Baby Pelvic Release",
+                targetBn = "৪৫ সেকেন্ড রিল্যাক্স",
+                targetEn = "45s relax",
+                durationSec = 45,
+                restSec = 15,
+                animationType = "kegel_happy_baby",
+                instructionsBn = "হাঁটু বুকের কাছে টেনে পায়ের পাতার বাইরের অংশ হাত দিয়ে ধরুন। পেলভিক ফ্লোর পেশি সম্পূর্ণ শিথিল করে শান্তভাবে শ্বাস নিন।",
+                instructionsEn = "Lie on back holding feet gently pulling knees towards armpits. Completely relax the pelvic floor and decompress.",
+                isFavorite = true,
+                isDownloaded = true,
+                downloadSizeMb = 7.4
             )
-            database.exerciseDao().insertAll(fullBodyExercises)
+        )
+        database.exerciseDao().insertAll(tenKegelExercises)
 
-            // Seed sample workout history matching UI mockup
-            val now = System.currentTimeMillis()
-            val dayMs = 86400000L
-            val defaultHistory = listOf(
-                WorkoutHistoryEntity(
-                    workoutId = "wb_full_body",
-                    workoutTitleBn = "Full Body Workout",
-                    workoutTitleEn = "Full Body Workout",
-                    timestamp = now - (dayMs * 0),
-                    durationMinutes = 32,
-                    exercisesCompleted = 12,
-                    totalExercises = 12,
-                    caloriesBurned = 210
-                ),
-                WorkoutHistoryEntity(
-                    workoutId = "wb_abs",
-                    workoutTitleBn = "Abs & Core",
-                    workoutTitleEn = "Abs & Core",
-                    timestamp = now - (dayMs * 1),
-                    durationMinutes = 20,
-                    exercisesCompleted = 10,
-                    totalExercises = 10,
-                    caloriesBurned = 145
-                ),
-                WorkoutHistoryEntity(
-                    workoutId = "wb_chest",
-                    workoutTitleBn = "Chest Workout",
-                    workoutTitleEn = "Chest Workout",
-                    timestamp = now - (dayMs * 2),
-                    durationMinutes = 28,
-                    exercisesCompleted = 8,
-                    totalExercises = 8,
-                    caloriesBurned = 180
-                ),
-                WorkoutHistoryEntity(
-                    workoutId = "wb_legs",
-                    workoutTitleBn = "Legs Workout",
-                    workoutTitleEn = "Legs Workout",
-                    timestamp = now - (dayMs * 3),
-                    durationMinutes = 30,
-                    exercisesCompleted = 10,
-                    totalExercises = 10,
-                    caloriesBurned = 230
-                ),
-                WorkoutHistoryEntity(
-                    workoutId = "wb_shoulders",
-                    workoutTitleBn = "Shoulders Workout",
-                    workoutTitleEn = "Shoulders Workout",
-                    timestamp = now - (dayMs * 5),
-                    durationMinutes = 25,
-                    exercisesCompleted = 8,
-                    totalExercises = 8,
-                    caloriesBurned = 160
-                )
+        // Seed initial history
+        val now = System.currentTimeMillis()
+        val dayMs = 86400000L
+        val defaultHistory = listOf(
+            WorkoutHistoryEntity(
+                workoutId = "wb_kegel_main",
+                workoutTitleBn = "১০ ক্যাগেল এক্সারসাইজ রুটিন",
+                workoutTitleEn = "10 Pelvic Kegel Exercises Routine",
+                timestamp = now - (dayMs * 0),
+                durationMinutes = 20,
+                exercisesCompleted = 10,
+                totalExercises = 10,
+                caloriesBurned = 110
+            ),
+            WorkoutHistoryEntity(
+                workoutId = "wb_kegel_quick",
+                workoutTitleBn = "দ্রুত পেলভিক শক্তি ও ফ্লিক",
+                workoutTitleEn = "Quick Pelvic Floor Power",
+                timestamp = now - (dayMs * 1),
+                durationMinutes = 12,
+                exercisesCompleted = 5,
+                totalExercises = 5,
+                caloriesBurned = 75
+            ),
+            WorkoutHistoryEntity(
+                workoutId = "wb_kegel_main",
+                workoutTitleBn = "১০ ক্যাগেল এক্সারসাইজ রুটিন",
+                workoutTitleEn = "10 Pelvic Kegel Exercises Routine",
+                timestamp = now - (dayMs * 2),
+                durationMinutes = 20,
+                exercisesCompleted = 10,
+                totalExercises = 10,
+                caloriesBurned = 110
+            ),
+            WorkoutHistoryEntity(
+                workoutId = "wb_kegel_release",
+                workoutTitleBn = "পেলভিক রিল্যাক্সেশন ও স্ট্রেচ",
+                workoutTitleEn = "Pelvic Release & Flexibility",
+                timestamp = now - (dayMs * 3),
+                durationMinutes = 15,
+                exercisesCompleted = 5,
+                totalExercises = 5,
+                caloriesBurned = 60
             )
-            for (h in defaultHistory) {
-                database.workoutHistoryDao().insertHistory(h)
-            }
-
-            database.reminderSettingsDao().saveReminderSettings(
-                ReminderSettingsEntity(
-                    id = 1,
-                    isEnabled = true,
-                    reminderTime = "07:00 AM",
-                    selectedDays = "Mon,Tue,Wed,Thu,Fri,Sat,Sun"
-                )
-            )
+        )
+        for (h in defaultHistory) {
+            database.workoutHistoryDao().insertHistory(h)
         }
+
+        database.reminderSettingsDao().saveReminderSettings(
+            ReminderSettingsEntity(
+                id = 1,
+                isEnabled = true,
+                reminderTime = "07:00 AM",
+                selectedDays = "Mon,Tue,Wed,Thu,Fri,Sat,Sun"
+            )
+        )
     }
 }

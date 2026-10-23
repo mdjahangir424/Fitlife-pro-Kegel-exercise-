@@ -131,7 +131,7 @@ fun ProgressScreen(
                         modifier = Modifier
                             .size(54.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF1E3A2B))
+                            .background(Color(0xFF0C4A6E))
                             .border(2.dp, NeonEmerald, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
@@ -299,7 +299,7 @@ fun ProgressScreen(
 
                             // Active progress bar
                             drawRoundRect(
-                                color = if (i == 4) NeonEmerald else Color(0xFF10B981),
+                                color = if (i == 4) NeonEmerald else Color(0xFF0284C7),
                                 topLeft = Offset(x, y),
                                 size = Size(barWidth, barHeight),
                                 cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())

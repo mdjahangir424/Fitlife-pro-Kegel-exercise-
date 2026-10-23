@@ -55,7 +55,8 @@ fun DownloadsScreen(
     downloadedExercises: List<ExerciseEntity>,
     isBangla: Boolean,
     onDeleteDownload: (String) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onExerciseClick: ((ExerciseEntity) -> Unit)? = null
 ) {
     BackHandler { onBack() }
 
@@ -154,7 +155,9 @@ fun DownloadsScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, SurfaceBorder, RoundedCornerShape(16.dp)),
+                            .clip(RoundedCornerShape(16.dp))
+                            .border(1.dp, SurfaceBorder, RoundedCornerShape(16.dp))
+                            .clickable { onExerciseClick?.invoke(ex) },
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = SurfaceCard)
                     ) {

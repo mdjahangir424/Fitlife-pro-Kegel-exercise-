@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -49,8 +50,9 @@ import com.example.data.model.UserProfileEntity
 import com.example.data.model.WorkoutEntity
 import com.example.ui.theme.AccentOrange
 import com.example.ui.theme.BackgroundDark
-import com.example.ui.theme.EmeraldDark
-import com.example.ui.theme.NeonEmerald
+import com.example.ui.theme.SkyBlueDark
+import com.example.ui.theme.SkyBlueLight
+import com.example.ui.theme.SkyBluePrimary
 import com.example.ui.theme.SurfaceBorder
 import com.example.ui.theme.SurfaceCard
 import com.example.ui.theme.TextMuted
@@ -69,7 +71,7 @@ fun HomeScreen(
     onCalendarClick: () -> Unit
 ) {
     val userName = userProfile?.name ?: if (isBangla) "জাহাঙ্গীর" else "Jahangir"
-    val todayWorkout = workouts.firstOrNull { it.id == "wb_full_body" } ?: workouts.firstOrNull()
+    val todayWorkout = workouts.firstOrNull { it.id == "wb_kegel_main" } ?: workouts.firstOrNull()
 
     Column(
         modifier = Modifier
@@ -105,7 +107,7 @@ fun HomeScreen(
                     Text(
                         text = LanguageStrings.get("tagline", isBangla),
                         fontSize = 10.sp,
-                        color = NeonEmerald
+                        color = SkyBlueLight
                     )
                 }
             }
@@ -145,12 +147,13 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Today's Featured Workout Card
+        // Today's Featured Kegel Workout Card
         if (todayWorkout != null) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
+                    .border(1.dp, SkyBlueLight.copy(alpha = 0.4f), RoundedCornerShape(20.dp))
                     .clickable { onWorkoutClick(todayWorkout) }
                     .testTag("today_workout_card"),
                 shape = RoundedCornerShape(20.dp),
@@ -159,21 +162,21 @@ fun HomeScreen(
                 Box(modifier = Modifier.fillMaxWidth().height(180.dp)) {
                     Image(
                         painter = painterResource(id = R.drawable.fitlife_workout_hero_1792717888791),
-                        contentDescription = "Workout Hero",
+                        contentDescription = "Kegel Workout Hero",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop
                     )
 
-                    // Gradient Scrim
+                    // Gradient Scrim with sky blue undertone
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(
                                 Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color(0xEE0D1117),
-                                        Color(0xAA0D1117),
-                                        Color(0x330D1117)
+                                        Color(0xFA0A0F1D),
+                                        Color(0xD00A0F1D),
+                                        Color(0x400A0F1D)
                                     )
                                 )
                             )
@@ -189,14 +192,14 @@ fun HomeScreen(
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(6.dp))
-                                    .background(Color(0x4400E676))
+                                    .background(Color(0xFF0C4A6E))
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                             ) {
                                 Text(
                                     text = LanguageStrings.get("today_workout", isBangla),
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = NeonEmerald
+                                    color = SkyBlueLight
                                 )
                             }
 
@@ -204,13 +207,13 @@ fun HomeScreen(
 
                             Text(
                                 text = if (isBangla) todayWorkout.titleBn else todayWorkout.titleEn,
-                                fontSize = 18.sp,
+                                fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = TextPrimary
                             )
 
                             Text(
-                                text = "${todayWorkout.durationMinutes} ${LanguageStrings.get("minutes", isBangla)} • ${todayWorkout.exerciseCount} ${LanguageStrings.get("exercises", isBangla)}",
+                                text = "${todayWorkout.exerciseCount} ${LanguageStrings.get("exercises", isBangla)} • ${todayWorkout.durationMinutes} ${LanguageStrings.get("minutes", isBangla)}",
                                 fontSize = 12.sp,
                                 color = TextSecondary,
                                 modifier = Modifier.padding(top = 2.dp)
@@ -224,7 +227,7 @@ fun HomeScreen(
                                 .testTag("start_workout_home_btn"),
                             shape = RoundedCornerShape(20.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = NeonEmerald,
+                                containerColor = SkyBlueLight,
                                 contentColor = Color.Black
                             )
                         ) {
@@ -277,13 +280,13 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
-                        imageVector = Icons.Default.FitnessCenter,
-                        contentDescription = "Workouts",
-                        tint = NeonEmerald,
+                        imageVector = Icons.Default.SelfImprovement,
+                        contentDescription = "Kegels",
+                        tint = SkyBlueLight,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "12/12", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = "10/10", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                     Text(
                         text = LanguageStrings.get("exercises_done", isBangla),
                         fontSize = 10.sp,
@@ -308,11 +311,11 @@ fun HomeScreen(
                     Icon(
                         imageVector = Icons.Default.Schedule,
                         contentDescription = "Time",
-                        tint = Color(0xFF00B0FF),
+                        tint = SkyBluePrimary,
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "32", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = "20", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                     Text(
                         text = LanguageStrings.get("time_min", isBangla),
                         fontSize = 10.sp,
@@ -341,7 +344,7 @@ fun HomeScreen(
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "210", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = "110", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
                     Text(
                         text = LanguageStrings.get("calories_burned", isBangla),
                         fontSize = 10.sp,
@@ -369,7 +372,7 @@ fun HomeScreen(
             Text(
                 text = if (isBangla) "ক্যালেন্ডার দেখুন ➔" else "View Calendar ➔",
                 fontSize = 12.sp,
-                color = NeonEmerald,
+                color = SkyBlueLight,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.clickable { onCalendarClick() }
             )
@@ -415,7 +418,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .size(24.dp)
                                 .clip(CircleShape)
-                                .background(if (isActive) NeonEmerald else Color(0xFF273140)),
+                                .background(if (isActive) SkyBlueLight else Color(0xFF1E293B)),
                             contentAlignment = Alignment.Center
                         ) {
                             if (isActive) {

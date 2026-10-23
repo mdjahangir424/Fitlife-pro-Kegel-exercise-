@@ -130,7 +130,7 @@ fun WorkoutHistoryScreen(
                                 modifier = Modifier
                                     .size(46.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFF1B3828)),
+                                    .background(Color(0xFF0C4A6E)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(

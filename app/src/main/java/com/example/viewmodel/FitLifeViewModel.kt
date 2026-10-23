@@ -38,7 +38,8 @@ enum class Screen {
     FAVORITES,
     REMINDERS,
     ABOUT_OWNER,
-    DATABASE_MANAGER
+    DATABASE_MANAGER,
+    EXERCISE_VIDEO_PLAYER
 }
 
 class FitLifeViewModel(application: Application) : AndroidViewModel(application) {
@@ -90,6 +91,14 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
     private val _selectedWorkoutExercises = MutableStateFlow<List<ExerciseEntity>>(emptyList())
     val selectedWorkoutExercises: StateFlow<List<ExerciseEntity>> = _selectedWorkoutExercises.asStateFlow()
 
+    private val _videoExercise = MutableStateFlow<ExerciseEntity?>(null)
+    val videoExercise: StateFlow<ExerciseEntity?> = _videoExercise.asStateFlow()
+
+    fun openVideoPlayer(exercise: ExerciseEntity) {
+        _videoExercise.value = exercise
+        navigateTo(Screen.EXERCISE_VIDEO_PLAYER)
+    }
+
     // Active workout session state
     private val _currentExerciseIndex = MutableStateFlow(0)
     val currentExerciseIndex: StateFlow<Int> = _currentExerciseIndex.asStateFlow()
@@ -107,13 +116,13 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
     val restSeconds: StateFlow<Int> = _restSeconds.asStateFlow()
 
     // Last completed session stats
-    private val _completedDurationMinutes = MutableStateFlow(30)
+    private val _completedDurationMinutes = MutableStateFlow(20)
     val completedDurationMinutes: StateFlow<Int> = _completedDurationMinutes.asStateFlow()
 
-    private val _completedExercisesCount = MutableStateFlow(12)
+    private val _completedExercisesCount = MutableStateFlow(10)
     val completedExercisesCount: StateFlow<Int> = _completedExercisesCount.asStateFlow()
 
-    private val _completedCalories = MutableStateFlow(210)
+    private val _completedCalories = MutableStateFlow(110)
     val completedCalories: StateFlow<Int> = _completedCalories.asStateFlow()
 
     // JSON export / ownership state

@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.AccentCyan
-import com.example.ui.theme.NeonEmerald
+import com.example.ui.theme.SkyBlueLight
 import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
 
@@ -35,7 +35,7 @@ fun TimerRing(
     modifier: Modifier = Modifier,
     ringSize: Dp = 220.dp,
     strokeWidth: Dp = 14.dp,
-    ringColor: Color = NeonEmerald
+    ringColor: Color = SkyBlueLight
 ) {
     val progress = if (totalSeconds > 0) {
         (secondsRemaining.toFloat() / totalSeconds.toFloat()).coerceIn(0f, 1f)
@@ -58,7 +58,7 @@ fun TimerRing(
 
             // Background track
             drawCircle(
-                color = Color(0xFF1E2630),
+                color = Color(0xFF162032),
                 radius = radius,
                 center = centerOffset,
                 style = Stroke(width = strokePx)

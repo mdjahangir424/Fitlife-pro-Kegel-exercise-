@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,7 +67,8 @@ fun WorkoutDetailScreen(
     exercises: List<ExerciseEntity>,
     isBangla: Boolean,
     onBack: () -> Unit,
-    onStartWorkout: (WorkoutEntity) -> Unit
+    onStartWorkout: (WorkoutEntity) -> Unit,
+    onExerciseClick: (ExerciseEntity) -> Unit
 ) {
     BackHandler { onBack() }
 
@@ -153,7 +155,7 @@ fun WorkoutDetailScreen(
                     Row(
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFF1B2E24))
+                            .background(Color(0xFF0C4A6E))
                             .border(1.dp, NeonEmerald.copy(alpha = 0.5f), RoundedCornerShape(20.dp))
                             .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -278,7 +280,9 @@ fun WorkoutDetailScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 6.dp),
+                        .padding(horizontal = 20.dp, vertical = 6.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .clickable { onExerciseClick(ex) },
                     shape = RoundedCornerShape(14.dp),
                     colors = CardDefaults.cardColors(containerColor = SurfaceCard)
                 ) {

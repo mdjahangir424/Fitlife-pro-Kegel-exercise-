@@ -65,7 +65,8 @@ fun ActiveWorkoutScreen(
     onPauseToggle: () -> Unit,
     onSkip: () -> Unit,
     onFinish: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onOpenVideo: (() -> Unit)? = null
 ) {
     BackHandler { onBack() }
 
@@ -118,16 +119,29 @@ fun ActiveWorkoutScreen(
                 )
             }
 
-            Box(modifier = Modifier.size(40.dp))
+            IconButton(
+                onClick = { onOpenVideo?.invoke() },
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF0C4A6E))
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = "3D Video",
+                    tint = NeonEmerald
+                )
+            }
         }
 
-        // Animated Exercise Guide View
+        // Animated Exercise Guide View (Tap to open full 3D video)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .border(1.dp, SurfaceBorder, RoundedCornerShape(20.dp))
+                .clickable { onOpenVideo?.invoke() }
         ) {
             ExerciseCanvasAnimation(
                 animationType = currentExercise.animationType,

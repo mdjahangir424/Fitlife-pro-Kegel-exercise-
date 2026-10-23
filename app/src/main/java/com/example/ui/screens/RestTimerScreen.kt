@@ -87,7 +87,7 @@ fun RestTimerScreen(
                 modifier = Modifier
                     .size(60.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF162520)),
+                    .background(Color(0xFF0C4A6E)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
