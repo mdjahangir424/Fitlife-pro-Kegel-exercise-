@@ -1,0 +1,26 @@
+================================================================
+          FitLife Pro - Better Health • Stronger You
+                 Version: 1.0.0 (Production Ready)
+               Owner & Creator: Md Jahangir Alam
+================================================================
+
+[কিভাবে ডাউনলোড ও ইনস্টল করবেন (How to Download & Install)]:
+
+১. বাম পাশের ফাইল এক্সপ্লোরার (File Explorer) প্যানেল থেকে 
+   "FitLifePro_APK" ফোল্ডারটি ওপেন করুন।
+
+২. "FitLifePro_v1.0.0.apk" ফাইলটির উপর রাইট-ক্লিক (Right Click) করুন 
+   এবং "Download" সিলেক্ট করে আপনার কম্পিউটার বা ফোনে সেভ করুন।
+
+৩. আপনার অ্যান্ড্রয়েড ফোনে ফাইলটি ওপেন করে "Install" বাটনে চাপুন।
+   (যদি "Install from unknown sources" বা "Unknown apps" অনুমতি চায়, 
+   তবে সেটি Allow / Enable করে দিন)।
+
+৪. ইনস্টল সম্পন্ন হলে সরাসরি "FitLife Pro" ওপেন করে উপভোগ করুন!
+
+[অ্যাপের বিশেষ তথ্য]:
+- অ্যাপ্লিকেশন আইডি: com.aistudio.fitlifepro.bdflp
+- টার্গেট প্ল্যাটফর্ম: Android 7.0 (API 24) থেকে Android 16 (API 36)
+- মালিকানা: মোঃ জাহাঙ্গীর আলম (Md Jahangir Alam)
+- ডেটাবেস: ১০০% লোকাল ও অফলাইন (Room SQLite)
+================================================================
