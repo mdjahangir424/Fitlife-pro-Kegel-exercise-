@@ -1,0 +1,6 @@
+{
+  "name": "FitLife Pro",
+  "description": "Comprehensive fitness workout app with animated exercises, custom routines, Bengali and English localization, and full offline database ownership.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
