@@ -66,6 +66,10 @@ import com.example.ui.theme.TextSecondary
 import com.example.util.LanguageStrings
 import kotlinx.coroutines.delay
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.IconButton
+
 @Composable
 fun ProfileSetupScreen(
     initialName: String,
@@ -74,11 +78,16 @@ fun ProfileSetupScreen(
     initialGoal: String,
     isBangla: Boolean,
     onSave: (name: String, age: String, exp: String, goal: String) -> Unit,
+    onBack: (() -> Unit)? = null,
     onViewAboutOwner: (() -> Unit)? = null,
-    onNavigateLanguage: (() -> Unit)? = null,
-    isTabMode: Boolean = false,
     currentUserEmail: String? = null
 ) {
+    if (onBack != null) {
+        BackHandler {
+            onBack()
+        }
+    }
+
     var name by remember(initialName) {
         mutableStateOf(initialName.ifEmpty { if (isBangla) "মোঃ জাহাঙ্গীর আলম" else "Md Jahangir Alam" })
     }
@@ -134,12 +143,41 @@ fun ProfileSetupScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Top Back bar if not in onboarding
+        if (onBack != null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { onBack() },
+                    modifier = Modifier.testTag("profile_back_btn")
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = TextPrimary
+                    )
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = if (isBangla) "প্রোফাইল সেটিংস" else "Profile Settings",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         // Screen Header
         Text(
-            text = if (isTabMode) LanguageStrings.get("profile_setup_tab_title", isBangla)
-            else LanguageStrings.get("profile_title", isBangla),
+            text = LanguageStrings.get("profile_title", isBangla),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
@@ -149,8 +187,7 @@ fun ProfileSetupScreen(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = if (isTabMode) LanguageStrings.get("profile_setup_tab_sub", isBangla)
-            else LanguageStrings.get("profile_sub", isBangla),
+            text = LanguageStrings.get("profile_sub", isBangla),
             fontSize = 13.sp,
             color = TextMuted,
             textAlign = TextAlign.Center
@@ -432,72 +469,14 @@ fun ProfileSetupScreen(
             )
         }
 
-        // Quick Navigation to Language & About Owner
-        if (isTabMode) {
-            Spacer(modifier = Modifier.height(24.dp))
+        // About App Creator link (if provided)
+        if (onViewAboutOwner != null) {
+            Spacer(modifier = Modifier.height(20.dp))
 
-            // Quick Link: Change Language Options
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onNavigateLanguage?.invoke() }
-                    .testTag("profile_to_language_tab"),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard),
-                shape = RoundedCornerShape(14.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, SurfaceBorder)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF0C4A6E)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Translate,
-                                contentDescription = "Language",
-                                tint = SkyBlueLight,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Column {
-                            Text(
-                                text = LanguageStrings.get("language_tab_title", isBangla),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = TextPrimary
-                            )
-                            Text(
-                                text = if (isBangla) "বর্তমান ভাষা: 🇧🇩 বাংলা" else "Current: 🇬🇧 English",
-                                fontSize = 12.sp,
-                                color = TextMuted
-                            )
-                        }
-                    }
-                    Icon(
-                        imageVector = Icons.Default.ChevronRight,
-                        contentDescription = "Arrow",
-                        tint = TextMuted
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Quick Link: About App Creator & DB control
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onViewAboutOwner?.invoke() }
+                    .clickable { onViewAboutOwner() }
                     .testTag("profile_to_about_owner"),
                 colors = CardDefaults.cardColors(containerColor = SurfaceCard),
                 shape = RoundedCornerShape(14.dp),
@@ -534,7 +513,7 @@ fun ProfileSetupScreen(
                                 color = TextPrimary
                             )
                             Text(
-                                text = "মোঃ জাহাঙ্গীর আলম • ডেটাবেস ব্যাকআপ",
+                                text = "Md Jahangir Alam • Database & App Info",
                                 fontSize = 12.sp,
                                 color = TextMuted
                             )

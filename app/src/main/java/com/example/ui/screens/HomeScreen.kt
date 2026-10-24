@@ -57,6 +57,7 @@ import com.example.ui.theme.SurfaceBorder
 import com.example.ui.theme.SurfaceCard
 import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
+import com.example.ui.components.SettingsCard
 import com.example.ui.theme.TextSecondary
 import com.example.util.LanguageStrings
 
@@ -70,7 +71,8 @@ fun HomeScreen(
     onStartWorkout: (WorkoutEntity) -> Unit,
     onNotificationClick: () -> Unit,
     onCalendarClick: () -> Unit,
-    onToggleLanguage: () -> Unit,
+    onNavigateProfile: () -> Unit,
+    onNavigateLanguage: () -> Unit,
     onToggleTheme: () -> Unit
 ) {
     val userName = userProfile?.name ?: if (isBangla) "জাহাঙ্গীর" else "Jahangir"
@@ -115,26 +117,8 @@ fun HomeScreen(
                 }
             }
 
-            // Quick Actions (1-Click Language & Theme Switcher)
+            // Quick Actions (Theme Switcher & Notification)
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                // 1-Click Language Switcher Pill
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFF0C4A6E))
-                        .border(1.dp, SkyBlueLight.copy(alpha = 0.5f), RoundedCornerShape(16.dp))
-                        .clickable { onToggleLanguage() }
-                        .padding(horizontal = 10.dp, vertical = 6.dp)
-                        .testTag("one_click_language_toggle")
-                ) {
-                    Text(
-                        text = if (isBangla) "🇧🇩 বাংলা" else "🇬🇧 EN",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-
                 // Theme Mode Switcher Button (Dark / Light / System)
                 IconButton(
                     onClick = onToggleTheme,
@@ -473,6 +457,17 @@ fun HomeScreen(
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Settings Card containing Profile and Language Change options
+        SettingsCard(
+            userName = userName,
+            currentLanguage = userProfile?.language ?: if (isBangla) "bn" else "en",
+            isBangla = isBangla,
+            onProfileClick = onNavigateProfile,
+            onLanguageClick = onNavigateLanguage
+        )
 
         Spacer(modifier = Modifier.height(28.dp))
     }

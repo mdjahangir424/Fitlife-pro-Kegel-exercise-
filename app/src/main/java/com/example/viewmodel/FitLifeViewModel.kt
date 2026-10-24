@@ -33,6 +33,7 @@ enum class Screen {
     HOME,
     CATEGORIES,
     PROGRESS,
+    SETTINGS,
     PROFILE,
     WORKOUT_DETAIL,
     ACTIVE_WORKOUT,

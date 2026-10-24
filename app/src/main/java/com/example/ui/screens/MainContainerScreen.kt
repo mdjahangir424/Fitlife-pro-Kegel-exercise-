@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -76,8 +77,7 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
         Screen.HOME,
         Screen.CATEGORIES,
         Screen.PROGRESS,
-        Screen.PROFILE,
-        Screen.LANGUAGE_SELECTION
+        Screen.SETTINGS
     )
 
     // Back handling: If on secondary tab, back button returns to Home
@@ -184,22 +184,22 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         modifier = Modifier.testTag("nav_item_progress")
                     )
 
-                    // 4. Dedicated Profile Setup Tab
+                    // 4. Settings Tab
                     NavigationBarItem(
-                        selected = currentScreen == Screen.PROFILE,
-                        onClick = { viewModel.navigateTo(Screen.PROFILE, addToBackStack = false) },
+                        selected = currentScreen == Screen.SETTINGS,
+                        onClick = { viewModel.navigateTo(Screen.SETTINGS, addToBackStack = false) },
                         icon = {
                             Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Profile",
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings",
                                 modifier = Modifier.size(22.dp)
                             )
                         },
                         label = {
                             Text(
-                                text = LanguageStrings.get("nav_profile", isBangla),
+                                text = LanguageStrings.get("nav_settings", isBangla),
                                 fontSize = 10.sp,
-                                fontWeight = if (currentScreen == Screen.PROFILE) FontWeight.Bold else FontWeight.Normal
+                                fontWeight = if (currentScreen == Screen.SETTINGS) FontWeight.Bold else FontWeight.Normal
                             )
                         },
                         colors = NavigationBarItemDefaults.colors(
@@ -209,35 +209,7 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                             unselectedIconColor = TextMuted,
                             unselectedTextColor = TextMuted
                         ),
-                        modifier = Modifier.testTag("nav_item_profile")
-                    )
-
-                    // 5. Dedicated Language Options Tab
-                    NavigationBarItem(
-                        selected = currentScreen == Screen.LANGUAGE_SELECTION,
-                        onClick = { viewModel.navigateTo(Screen.LANGUAGE_SELECTION, addToBackStack = false) },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Translate,
-                                contentDescription = "Language",
-                                modifier = Modifier.size(22.dp)
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = LanguageStrings.get("nav_language", isBangla),
-                                fontSize = 10.sp,
-                                fontWeight = if (currentScreen == Screen.LANGUAGE_SELECTION) FontWeight.Bold else FontWeight.Normal
-                            )
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Color.White,
-                            selectedTextColor = SkyBlueLight,
-                            indicatorColor = SkyBluePrimary,
-                            unselectedIconColor = TextMuted,
-                            unselectedTextColor = TextMuted
-                        ),
-                        modifier = Modifier.testTag("nav_item_language")
+                        modifier = Modifier.testTag("nav_item_settings")
                     )
                 }
             }
@@ -276,9 +248,14 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         themeMode = themeMode,
                         onLanguageSelected = { lang -> viewModel.setLanguage(lang) },
                         onToggleTheme = { mode -> viewModel.setThemeMode(mode) },
-                        onContinue = { viewModel.navigateTo(Screen.PROFILE_SETUP) },
-                        onGoToProfile = { viewModel.navigateTo(Screen.PROFILE, addToBackStack = false) },
-                        isTabMode = isMainTab
+                        onBack = { viewModel.navigateBack() },
+                        onContinue = {
+                            if (userProfile?.hasCompletedOnboarding == true) {
+                                viewModel.navigateBack()
+                            } else {
+                                viewModel.navigateTo(Screen.PROFILE_SETUP)
+                            }
+                        }
                     )
                 }
 
@@ -294,9 +271,7 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                             viewModel.updateProfile(name, age, exp, goal, userProfile?.language ?: "bn")
                             viewModel.navigateTo(Screen.HOME, addToBackStack = false)
                         },
-                        onViewAboutOwner = { viewModel.navigateTo(Screen.ABOUT_OWNER) },
-                        onNavigateLanguage = { viewModel.navigateTo(Screen.LANGUAGE_SELECTION, addToBackStack = false) },
-                        isTabMode = false
+                        onViewAboutOwner = { viewModel.navigateTo(Screen.ABOUT_OWNER) }
                     )
                 }
 
@@ -311,9 +286,21 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         onSave = { name, age, exp, goal ->
                             viewModel.updateProfile(name, age, exp, goal, userProfile?.language ?: "bn")
                         },
-                        onViewAboutOwner = { viewModel.navigateTo(Screen.ABOUT_OWNER) },
-                        onNavigateLanguage = { viewModel.navigateTo(Screen.LANGUAGE_SELECTION, addToBackStack = false) },
-                        isTabMode = true
+                        onBack = { viewModel.navigateBack() },
+                        onViewAboutOwner = { viewModel.navigateTo(Screen.ABOUT_OWNER) }
+                    )
+                }
+
+                Screen.SETTINGS -> {
+                    SettingsScreen(
+                        userProfile = userProfile,
+                        isBangla = isBangla,
+                        themeMode = themeMode,
+                        onNavigateProfile = { viewModel.navigateTo(Screen.PROFILE) },
+                        onNavigateLanguage = { viewModel.navigateTo(Screen.LANGUAGE_SELECTION) },
+                        onNavigateReminders = { viewModel.navigateTo(Screen.REMINDERS) },
+                        onNavigateAbout = { viewModel.navigateTo(Screen.ABOUT_OWNER) },
+                        onToggleTheme = { viewModel.toggleThemeMode() }
                     )
                 }
 
@@ -336,8 +323,11 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         onCalendarClick = {
                             viewModel.navigateTo(Screen.CALENDAR)
                         },
-                        onToggleLanguage = {
-                            viewModel.toggleLanguage()
+                        onNavigateProfile = {
+                            viewModel.navigateTo(Screen.PROFILE)
+                        },
+                        onNavigateLanguage = {
+                            viewModel.navigateTo(Screen.LANGUAGE_SELECTION)
                         },
                         onToggleTheme = {
                             viewModel.toggleThemeMode()
@@ -529,8 +519,11 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         onCalendarClick = {
                             viewModel.navigateTo(Screen.CALENDAR)
                         },
-                        onToggleLanguage = {
-                            viewModel.toggleLanguage()
+                        onNavigateProfile = {
+                            viewModel.navigateTo(Screen.PROFILE)
+                        },
+                        onNavigateLanguage = {
+                            viewModel.navigateTo(Screen.LANGUAGE_SELECTION)
                         },
                         onToggleTheme = {
                             viewModel.toggleThemeMode()

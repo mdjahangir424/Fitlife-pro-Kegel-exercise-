@@ -51,6 +51,7 @@ object LanguageStrings {
         "nav_home" to "হোম",
         "nav_categories" to "ক্যাটাগরি",
         "nav_progress" to "প্রগতি",
+        "nav_settings" to "সেটিংস",
         "nav_profile" to "প্রোফাইল",
         
         "search_category" to "ক্যাটাগরি খুঁজুন...",
@@ -206,6 +207,7 @@ object LanguageStrings {
         "nav_home" to "Home",
         "nav_categories" to "Categories",
         "nav_progress" to "Progress",
+        "nav_settings" to "Settings",
         "nav_profile" to "Profile",
         
         "search_category" to "Search...",

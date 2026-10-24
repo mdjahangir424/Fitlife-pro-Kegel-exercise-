@@ -55,17 +55,26 @@ import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
 import com.example.util.LanguageStrings
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.IconButton
+
 @Composable
 fun LanguageScreen(
     currentLanguage: String,
     themeMode: AppThemeMode = AppThemeMode.DARK,
     onLanguageSelected: (String) -> Unit,
     onToggleTheme: ((AppThemeMode) -> Unit)? = null,
-    onContinue: () -> Unit = {},
-    onGoToProfile: (() -> Unit)? = null,
-    isTabMode: Boolean = false
+    onBack: (() -> Unit)? = null,
+    onContinue: (() -> Unit)? = null
 ) {
     val isBangla = currentLanguage == "bn"
+
+    if (onBack != null) {
+        BackHandler {
+            onBack()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -75,7 +84,37 @@ fun LanguageScreen(
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Back bar if navigated from Settings/Home
+        if (onBack != null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { onBack() },
+                    modifier = Modifier.testTag("language_back_btn")
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = TextPrimary
+                    )
+                }
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = if (isBangla) "ভাষা পরিবর্তন" else "Change Language",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         // Screen Icon & Header
         Box(
@@ -97,8 +136,7 @@ fun LanguageScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = if (isTabMode) LanguageStrings.get("language_tab_title", isBangla)
-            else LanguageStrings.get("select_language", isBangla),
+            text = LanguageStrings.get("select_language", isBangla),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
@@ -108,8 +146,7 @@ fun LanguageScreen(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = if (isTabMode) LanguageStrings.get("language_tab_sub", isBangla)
-            else LanguageStrings.get("select_language_sub", isBangla),
+            text = LanguageStrings.get("select_language_sub", isBangla),
             fontSize = 13.sp,
             color = TextMuted,
             textAlign = TextAlign.Center
@@ -348,67 +385,36 @@ fun LanguageScreen(
             }
         }
 
-        // Quick Navigation to Profile Setup tab
-        if (isTabMode) {
-            Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-            Card(
+        if (onBack != null) {
+            Button(
+                onClick = { onBack() },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onGoToProfile?.invoke() }
-                    .testTag("language_to_profile_tab"),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+                    .height(52.dp)
+                    .testTag("language_done_button"),
                 shape = RoundedCornerShape(14.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, SurfaceBorder)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SkyBluePrimary,
+                    contentColor = Color.White
+                )
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF0C2D48)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Profile",
-                                tint = SkyBlueLight,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Column {
-                            Text(
-                                text = LanguageStrings.get("go_to_profile_setup", isBangla),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = TextPrimary
-                            )
-                            Text(
-                                text = if (isBangla) "নাম, বয়স, ফিটনেস লক্ষ্য পরিবর্তন করুন" else "Update name, age, and goals",
-                                fontSize = 12.sp,
-                                color = TextMuted
-                            )
-                        }
-                    }
-                    Icon(
-                        imageVector = Icons.Default.ChevronRight,
-                        contentDescription = "Arrow",
-                        tint = TextMuted
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = if (isBangla) "সম্পন্ন করুন" else "Done",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
-        } else {
-            Spacer(modifier = Modifier.height(24.dp))
+        } else if (onContinue != null) {
             Button(
-                onClick = onContinue,
+                onClick = { onContinue() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
