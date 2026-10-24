@@ -80,7 +80,13 @@ fun attemptAutoSignIn(
     onUnauthenticated: () -> Unit,
     scope: CoroutineScope
 ) {
-    if (Firebase.auth.currentUser != null) {
+    val current = try {
+        Firebase.auth.currentUser
+    } catch (e: Throwable) {
+        onUnauthenticated()
+        return
+    }
+    if (current != null) {
         onAuthSuccess()
         return
     }
@@ -163,7 +169,11 @@ fun signOutUser(
     onSignOutComplete: () -> Unit,
     scope: CoroutineScope
 ) {
-    Firebase.auth.signOut()
+    try {
+        Firebase.auth.signOut()
+    } catch (e: Throwable) {
+        Log.w("Auth", "Firebase signOut caught: ${e.message}")
+    }
     scope.launch {
         try {
             credentialManager.clearCredentialState(ClearCredentialStateRequest())
@@ -256,6 +266,7 @@ fun GoogleSignInButton(
 @Composable
 fun AuthScreen(
     onAuthSuccess: () -> Unit,
+    onContinueAsGuest: () -> Unit = {},
     isBangla: Boolean = true
 ) {
     val context = LocalContext.current
@@ -428,6 +439,25 @@ fun AuthScreen(
                     onAuthError = { err -> errorMessage = err },
                     isBangla = isBangla
                 )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                androidx.compose.material3.OutlinedButton(
+                    onClick = onContinueAsGuest,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .testTag("continue_as_guest_button"),
+                    shape = RoundedCornerShape(14.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, NeonEmerald)
+                ) {
+                    Text(
+                        text = if (isBangla) "অফলাইন হিসেবে শুরু করুন" else "Continue in Offline Mode",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = NeonEmerald
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

@@ -36,27 +36,41 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppContent(viewModel: FitLifeViewModel) {
-    var currentUser by remember { mutableStateOf(Firebase.auth.currentUser) }
+    var isGuestMode by remember { mutableStateOf(false) }
+    var currentUser by remember {
+        mutableStateOf(try { Firebase.auth.currentUser } catch (e: Throwable) { null })
+    }
 
     DisposableEffect(Unit) {
         val listener = FirebaseAuth.AuthStateListener { auth ->
             currentUser = auth.currentUser
             viewModel.onAuthStateChanged(auth.currentUser)
         }
-        Firebase.auth.addAuthStateListener(listener)
+        try {
+            Firebase.auth.addAuthStateListener(listener)
+        } catch (e: Throwable) {
+            // Firebase Auth not initialized or unavailable
+        }
         onDispose {
-            Firebase.auth.removeAuthStateListener(listener)
+            try {
+                Firebase.auth.removeAuthStateListener(listener)
+            } catch (e: Throwable) {
+                // Ignore
+            }
         }
     }
 
-    if (currentUser == null) {
+    if (currentUser == null && !isGuestMode) {
         val userProfile by viewModel.userProfile.collectAsState()
         val isBangla = (userProfile?.language ?: "bn") == "bn"
         AuthScreen(
             onAuthSuccess = {
-                val user = Firebase.auth.currentUser
+                val user = try { Firebase.auth.currentUser } catch (e: Throwable) { null }
                 currentUser = user
                 viewModel.onAuthStateChanged(user)
+            },
+            onContinueAsGuest = {
+                isGuestMode = true
             },
             isBangla = isBangla
         )

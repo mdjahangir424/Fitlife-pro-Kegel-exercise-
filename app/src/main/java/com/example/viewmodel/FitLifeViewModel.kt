@@ -68,20 +68,25 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
         }
 
         // Initialize Firestore repository if already authenticated
-        val currentFirebaseUser = Firebase.auth.currentUser
-        if (currentFirebaseUser != null) {
-            onAuthStateChanged(currentFirebaseUser)
+        try {
+            val currentFirebaseUser = Firebase.auth.currentUser
+            if (currentFirebaseUser != null) {
+                onAuthStateChanged(currentFirebaseUser)
+            }
+        } catch (e: Throwable) {
+            _cloudSyncStatus.value = "Offline Mode"
         }
     }
 
     fun onAuthStateChanged(user: FirebaseUser?) {
         if (user != null) {
             _currentUserEmail.value = user.email ?: user.displayName ?: "Google User"
-            val repo = FirestoreRepository(getApplication())
-            firestoreRepo = repo
-            _cloudSyncStatus.value = "Synced"
+            try {
+                val repo = FirestoreRepository(getApplication())
+                firestoreRepo = repo
+                _cloudSyncStatus.value = "Synced"
 
-            // Observe and sync user profile with Firestore
+                // Observe and sync user profile with Firestore
             viewModelScope.launch {
                 try {
                     repo.observeUserProfile().collect { cloudProfile ->
@@ -118,6 +123,10 @@ class FitLifeViewModel(application: Application) : AndroidViewModel(application)
                 } catch (e: Exception) {
                     _cloudSyncStatus.value = "Offline"
                 }
+            }
+            } catch (e: Exception) {
+                firestoreRepo = null
+                _cloudSyncStatus.value = "Offline"
             }
         } else {
             _currentUserEmail.value = null
