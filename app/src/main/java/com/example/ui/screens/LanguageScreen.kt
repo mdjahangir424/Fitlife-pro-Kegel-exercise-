@@ -52,7 +52,13 @@ import com.example.ui.theme.SurfaceBorder
 import com.example.ui.theme.SurfaceCard
 import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
-import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.appBackgroundColor
+import com.example.ui.theme.appBorderColor
+import com.example.ui.theme.appCardItemColor
+import com.example.ui.theme.appSurfaceColor
+import com.example.ui.theme.appTextMuted
+import com.example.ui.theme.appTextPrimary
+import com.example.ui.theme.isDarkTheme
 import com.example.util.LanguageStrings
 
 import androidx.activity.compose.BackHandler
@@ -69,6 +75,12 @@ fun LanguageScreen(
     onContinue: (() -> Unit)? = null
 ) {
     val isBangla = currentLanguage == "bn"
+    val isDark = isDarkTheme()
+    val bgColor = appBackgroundColor()
+    val surfaceColor = appSurfaceColor()
+    val borderColor = appBorderColor()
+    val textPrimaryColor = appTextPrimary()
+    val textMutedColor = appTextMuted()
 
     if (onBack != null) {
         BackHandler {
@@ -79,7 +91,7 @@ fun LanguageScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundDark)
+            .background(bgColor)
             .padding(horizontal = 20.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -101,7 +113,7 @@ fun LanguageScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = TextPrimary
+                        tint = textPrimaryColor
                     )
                 }
                 Spacer(modifier = Modifier.width(4.dp))
@@ -109,7 +121,7 @@ fun LanguageScreen(
                     text = if (isBangla) "ভাষা পরিবর্তন" else "Change Language",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary
+                    color = textPrimaryColor
                 )
             }
         } else {
@@ -121,14 +133,14 @@ fun LanguageScreen(
             modifier = Modifier
                 .size(76.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF0C2D48))
+                .background(if (isDark) Color(0xFF0C2D48) else Color(0xFFE0F2FE))
                 .border(2.dp, SkyBluePrimary, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Translate,
                 contentDescription = "Language",
-                tint = SkyBlueLight,
+                tint = if (isDark) SkyBlueLight else SkyBluePrimary,
                 modifier = Modifier.size(40.dp)
             )
         }
@@ -139,7 +151,7 @@ fun LanguageScreen(
             text = LanguageStrings.get("select_language", isBangla),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = textPrimaryColor,
             textAlign = TextAlign.Center
         )
 
@@ -148,7 +160,7 @@ fun LanguageScreen(
         Text(
             text = LanguageStrings.get("select_language_sub", isBangla),
             fontSize = 13.sp,
-            color = TextMuted,
+            color = textMutedColor,
             textAlign = TextAlign.Center
         )
 
@@ -164,9 +176,9 @@ fun LanguageScreen(
                     onLanguageSelected(next)
                 }
                 .testTag("quick_one_click_toggle_card"),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF0C4A6E)),
+            colors = CardDefaults.cardColors(containerColor = if (isDark) Color(0xFF0C4A6E) else SkyBluePrimary),
             shape = RoundedCornerShape(16.dp),
-            border = androidx.compose.foundation.BorderStroke(2.dp, SkyBluePrimary)
+            border = androidx.compose.foundation.BorderStroke(2.dp, if (isDark) SkyBluePrimary else Color(0xFF0284C7))
         ) {
             Row(
                 modifier = Modifier
@@ -180,13 +192,13 @@ fun LanguageScreen(
                         modifier = Modifier
                             .size(46.dp)
                             .clip(CircleShape)
-                            .background(SkyBluePrimary),
+                            .background(if (isDark) SkyBluePrimary else Color.White),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.SyncAlt,
                             contentDescription = "Toggle",
-                            tint = Color.White,
+                            tint = if (isDark) Color.White else SkyBluePrimary,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -203,7 +215,7 @@ fun LanguageScreen(
                             text = if (isBangla) "বর্তমান: 🇧🇩 বাংলা (এক ক্লিকে ইংলিশ করুন)"
                             else "Current: 🇬🇧 English (Click for Bangla)",
                             fontSize = 12.sp,
-                            color = SkyBlueLight
+                            color = if (isDark) SkyBlueLight else Color(0xFFE0F2FE)
                         )
                     }
                 }
@@ -232,10 +244,10 @@ fun LanguageScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(if (isBnSelected) Color(0xFF082F49) else SurfaceCard)
+                .background(if (isBnSelected) (if (isDark) Color(0xFF082F49) else Color(0xFFE0F2FE)) else surfaceColor)
                 .border(
                     width = if (isBnSelected) 2.dp else 1.dp,
-                    color = if (isBnSelected) SkyBluePrimary else SurfaceBorder,
+                    color = if (isBnSelected) SkyBluePrimary else borderColor,
                     shape = RoundedCornerShape(16.dp)
                 )
                 .clickable { onLanguageSelected("bn") }
@@ -252,12 +264,12 @@ fun LanguageScreen(
                         text = "বাংলা (Bangla)",
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = if (isBnSelected) SkyBlueLight else TextPrimary
+                        color = if (isBnSelected) (if (isDark) SkyBlueLight else SkyBluePrimary) else textPrimaryColor
                     )
                     Text(
                         text = "পেলভিক ফ্লোর ও ক্যাগেল সুস্থতা",
                         fontSize = 12.sp,
-                        color = TextMuted
+                        color = textMutedColor
                     )
                 }
             }
@@ -287,10 +299,10 @@ fun LanguageScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(if (isEnSelected) Color(0xFF082F49) else SurfaceCard)
+                .background(if (isEnSelected) (if (isDark) Color(0xFF082F49) else Color(0xFFE0F2FE)) else surfaceColor)
                 .border(
                     width = if (isEnSelected) 2.dp else 1.dp,
-                    color = if (isEnSelected) SkyBluePrimary else SurfaceBorder,
+                    color = if (isEnSelected) SkyBluePrimary else borderColor,
                     shape = RoundedCornerShape(16.dp)
                 )
                 .clickable { onLanguageSelected("en") }
@@ -307,12 +319,12 @@ fun LanguageScreen(
                         text = "English",
                         fontSize = 17.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = if (isEnSelected) SkyBlueLight else TextPrimary
+                        color = if (isEnSelected) (if (isDark) SkyBlueLight else SkyBluePrimary) else textPrimaryColor
                     )
                     Text(
                         text = "Pelvic Floor & Kegel Fitness",
                         fontSize = 12.sp,
-                        color = TextMuted
+                        color = textMutedColor
                     )
                 }
             }
@@ -341,16 +353,16 @@ fun LanguageScreen(
             text = LanguageStrings.get("theme_select_title", isBangla),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary,
+            color = textPrimaryColor,
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(12.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+            colors = CardDefaults.cardColors(containerColor = surfaceColor),
             shape = RoundedCornerShape(16.dp),
-            border = androidx.compose.foundation.BorderStroke(1.dp, SurfaceBorder)
+            border = androidx.compose.foundation.BorderStroke(1.dp, borderColor)
         ) {
             Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 // Dark Mode Option
@@ -446,14 +458,21 @@ private fun ThemeModeItem(
     onClick: () -> Unit,
     testTag: String
 ) {
+    val isDark = isDarkTheme()
+    val unselectedBg = if (isDark) BackgroundDark else Color(0xFFF1F5F9)
+    val selectedBg = if (isDark) Color(0xFF082F49) else Color(0xFFE0F2FE)
+    val borderColor = if (isSelected) SkyBluePrimary else appBorderColor()
+    val textPrimary = appTextPrimary()
+    val textMuted = appTextMuted()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(if (isSelected) Color(0xFF082F49) else BackgroundDark)
+            .background(if (isSelected) selectedBg else unselectedBg)
             .border(
                 width = if (isSelected) 1.5.dp else 1.dp,
-                color = if (isSelected) SkyBluePrimary else SurfaceBorder,
+                color = borderColor,
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable { onClick() }
@@ -466,7 +485,7 @@ private fun ThemeModeItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isSelected) SkyBlueLight else TextMuted,
+                tint = if (isSelected) (if (isDark) SkyBlueLight else SkyBluePrimary) else textMuted,
                 modifier = Modifier.size(22.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -475,12 +494,12 @@ private fun ThemeModeItem(
                     text = title,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = if (isSelected) SkyBlueLight else TextPrimary
+                    color = if (isSelected) (if (isDark) SkyBlueLight else SkyBluePrimary) else textPrimary
                 )
                 Text(
                     text = subtitle,
                     fontSize = 11.sp,
-                    color = TextMuted
+                    color = textMuted
                 )
             }
         }

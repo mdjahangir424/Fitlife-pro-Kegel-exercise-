@@ -55,10 +55,13 @@ import com.example.ui.theme.SkyBlueLight
 import com.example.ui.theme.SkyBluePrimary
 import com.example.ui.theme.SurfaceBorder
 import com.example.ui.theme.SurfaceCard
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextPrimary
-import com.example.ui.components.SettingsCard
-import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.appBackgroundColor
+import com.example.ui.theme.appBorderColor
+import com.example.ui.theme.appSurfaceColor
+import com.example.ui.theme.appTextMuted
+import com.example.ui.theme.appTextPrimary
+import com.example.ui.theme.appTextSecondary
+import com.example.ui.theme.isDarkTheme
 import com.example.util.LanguageStrings
 
 @Composable
@@ -71,17 +74,23 @@ fun HomeScreen(
     onStartWorkout: (WorkoutEntity) -> Unit,
     onNotificationClick: () -> Unit,
     onCalendarClick: () -> Unit,
-    onNavigateProfile: () -> Unit,
-    onNavigateLanguage: () -> Unit,
     onToggleTheme: () -> Unit
 ) {
+    val isDark = isDarkTheme()
+    val bgColor = appBackgroundColor()
+    val surfaceColor = appSurfaceColor()
+    val borderColor = appBorderColor()
+    val textPrimaryColor = appTextPrimary()
+    val textMutedColor = appTextMuted()
+    val textSecondaryColor = appTextSecondary()
+
     val userName = userProfile?.name ?: if (isBangla) "জাহাঙ্গীর" else "Jahangir"
     val todayWorkout = workouts.firstOrNull { it.id == "wb_kegel_main" } ?: workouts.firstOrNull()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundDark)
+            .background(bgColor)
             .padding(horizontal = 20.dp)
             .verticalScroll(rememberScrollState())
     ) {
@@ -107,7 +116,7 @@ fun HomeScreen(
                         text = "FitLife Pro",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        color = TextPrimary
+                        color = textPrimaryColor
                     )
                     Text(
                         text = LanguageStrings.get("tagline", isBangla),
@@ -125,8 +134,8 @@ fun HomeScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .background(SurfaceCard)
-                        .border(1.dp, SurfaceBorder, CircleShape)
+                        .background(surfaceColor)
+                        .border(1.dp, borderColor, CircleShape)
                         .testTag("home_theme_toggle_button")
                 ) {
                     Text(
@@ -144,13 +153,14 @@ fun HomeScreen(
                     modifier = Modifier
                         .size(36.dp)
                         .clip(CircleShape)
-                        .background(SurfaceCard)
+                        .background(surfaceColor)
+                        .border(1.dp, borderColor, CircleShape)
                         .testTag("home_notification_button")
                 ) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = "Notifications",
-                        tint = TextPrimary,
+                        tint = textPrimaryColor,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -164,12 +174,12 @@ fun HomeScreen(
             text = "${LanguageStrings.get("good_morning", isBangla)}, $userName!",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = textPrimaryColor
         )
         Text(
             text = LanguageStrings.get("fitness_quote", isBangla),
             fontSize = 13.sp,
-            color = TextMuted,
+            color = textMutedColor,
             modifier = Modifier.padding(top = 2.dp)
         )
 
@@ -185,7 +195,7 @@ fun HomeScreen(
                     .clickable { onWorkoutClick(todayWorkout) }
                     .testTag("today_workout_card"),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+                colors = CardDefaults.cardColors(containerColor = surfaceColor)
             ) {
                 Box(modifier = Modifier.fillMaxWidth().height(180.dp)) {
                     Image(
@@ -237,13 +247,13 @@ fun HomeScreen(
                                 text = if (isBangla) todayWorkout.titleBn else todayWorkout.titleEn,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = TextPrimary
+                                color = Color.White
                             )
 
                             Text(
                                 text = "${todayWorkout.exerciseCount} ${LanguageStrings.get("exercises", isBangla)} • ${todayWorkout.durationMinutes} ${LanguageStrings.get("minutes", isBangla)}",
                                 fontSize = 12.sp,
-                                color = TextSecondary,
+                                color = Color(0xFFBAE6FD),
                                 modifier = Modifier.padding(top = 2.dp)
                             )
                         }
@@ -284,7 +294,7 @@ fun HomeScreen(
                 text = LanguageStrings.get("today_progress", isBangla),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary
+                color = textPrimaryColor
             )
         }
 
@@ -299,9 +309,9 @@ fun HomeScreen(
             Card(
                 modifier = Modifier
                     .weight(1f)
-                    .border(1.dp, SurfaceBorder, RoundedCornerShape(16.dp)),
+                    .border(1.dp, borderColor, RoundedCornerShape(16.dp)),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+                colors = CardDefaults.cardColors(containerColor = surfaceColor)
             ) {
                 Column(
                     modifier = Modifier.padding(14.dp),
@@ -314,11 +324,11 @@ fun HomeScreen(
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "10/10", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = "10/10", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimaryColor)
                     Text(
                         text = LanguageStrings.get("exercises_done", isBangla),
                         fontSize = 10.sp,
-                        color = TextMuted,
+                        color = textMutedColor,
                         maxLines = 1
                     )
                 }
@@ -328,9 +338,9 @@ fun HomeScreen(
             Card(
                 modifier = Modifier
                     .weight(1f)
-                    .border(1.dp, SurfaceBorder, RoundedCornerShape(16.dp)),
+                    .border(1.dp, borderColor, RoundedCornerShape(16.dp)),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+                colors = CardDefaults.cardColors(containerColor = surfaceColor)
             ) {
                 Column(
                     modifier = Modifier.padding(14.dp),
@@ -343,11 +353,11 @@ fun HomeScreen(
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "20", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = "20", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimaryColor)
                     Text(
                         text = LanguageStrings.get("time_min", isBangla),
                         fontSize = 10.sp,
-                        color = TextMuted,
+                        color = textMutedColor,
                         maxLines = 1
                     )
                 }
@@ -357,9 +367,9 @@ fun HomeScreen(
             Card(
                 modifier = Modifier
                     .weight(1f)
-                    .border(1.dp, SurfaceBorder, RoundedCornerShape(16.dp)),
+                    .border(1.dp, borderColor, RoundedCornerShape(16.dp)),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+                colors = CardDefaults.cardColors(containerColor = surfaceColor)
             ) {
                 Column(
                     modifier = Modifier.padding(14.dp),
@@ -372,11 +382,11 @@ fun HomeScreen(
                         modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "110", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = "110", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = textPrimaryColor)
                     Text(
                         text = LanguageStrings.get("calories_burned", isBangla),
                         fontSize = 10.sp,
-                        color = TextMuted,
+                        color = textMutedColor,
                         maxLines = 1
                     )
                 }
@@ -395,7 +405,7 @@ fun HomeScreen(
                 text = LanguageStrings.get("weekly_activity", isBangla),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextPrimary
+                color = textPrimaryColor
             )
             Text(
                 text = if (isBangla) "ক্যালেন্ডার দেখুন ➔" else "View Calendar ➔",
@@ -412,10 +422,10 @@ fun HomeScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, SurfaceBorder, RoundedCornerShape(16.dp))
+                .border(1.dp, borderColor, RoundedCornerShape(16.dp))
                 .clickable { onCalendarClick() },
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+            colors = CardDefaults.cardColors(containerColor = surfaceColor)
         ) {
             val days = if (isBangla) {
                 listOf("সোম", "মঙ্গল", "বুধ", "বৃহঃ", "শুক্র", "শনি", "রবি")
@@ -438,7 +448,7 @@ fun HomeScreen(
                         Text(
                             text = day,
                             fontSize = 11.sp,
-                            color = if (isActive) TextPrimary else TextMuted,
+                            color = if (isActive) (if (isDark) textPrimaryColor else SkyBlueDark) else textMutedColor,
                             fontWeight = if (isActive) FontWeight.Bold else FontWeight.Normal
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -446,7 +456,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .size(24.dp)
                                 .clip(CircleShape)
-                                .background(if (isActive) SkyBlueLight else Color(0xFF1E293B)),
+                                .background(if (isActive) SkyBlueLight else if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0)),
                             contentAlignment = Alignment.Center
                         ) {
                             if (isActive) {
@@ -457,17 +467,6 @@ fun HomeScreen(
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Settings Card containing Profile and Language Change options
-        SettingsCard(
-            userName = userName,
-            currentLanguage = userProfile?.language ?: if (isBangla) "bn" else "en",
-            isBangla = isBangla,
-            onProfileClick = onNavigateProfile,
-            onLanguageClick = onNavigateLanguage
-        )
 
         Spacer(modifier = Modifier.height(28.dp))
     }

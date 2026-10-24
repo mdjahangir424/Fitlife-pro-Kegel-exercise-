@@ -33,13 +33,20 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ui.theme.SkyBlueDark
 import com.example.ui.theme.SkyBlueLight
 import com.example.ui.theme.SkyBluePrimary
 import com.example.ui.theme.SurfaceBorder
 import com.example.ui.theme.SurfaceCard
 import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
-import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.appBorderColor
+import com.example.ui.theme.appCardItemColor
+import com.example.ui.theme.appSurfaceColor
+import com.example.ui.theme.appTextMuted
+import com.example.ui.theme.appTextPrimary
+import com.example.ui.theme.appTextSecondary
+import com.example.ui.theme.isDarkTheme
 import com.example.util.LanguageStrings
 
 /**
@@ -54,13 +61,24 @@ fun SettingsCard(
     onLanguageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDark = isDarkTheme()
+    val surfaceColor = appSurfaceColor()
+    val cardItemColor = appCardItemColor()
+    val borderColor = appBorderColor()
+    val textPrimaryColor = appTextPrimary()
+    val textMutedColor = appTextMuted()
+    val textSecondaryColor = appTextSecondary()
+    val chevronColor = if (isDark) SkyBlueLight else SkyBlueDark
+    val pillBg = if (isDark) Color(0xFF0C4A6E) else Color(0xFFE0F2FE)
+    val pillText = if (isDark) SkyBlueLight else SkyBlueDark
+
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, SurfaceBorder, RoundedCornerShape(20.dp))
+            .border(1.dp, borderColor, RoundedCornerShape(20.dp))
             .testTag("settings_card"),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+        colors = CardDefaults.cardColors(containerColor = surfaceColor)
     ) {
         Column(
             modifier = Modifier.padding(18.dp)
@@ -92,12 +110,12 @@ fun SettingsCard(
                             text = "Settings",
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = textPrimaryColor
                         )
                         Text(
                             text = if (isBangla) "প্রোফাইল ও ভাষা সেটিংস পরিচালনা করুন" else "Manage your profile and language preferences",
                             fontSize = 11.sp,
-                            color = TextMuted
+                            color = textMutedColor
                         )
                     }
                 }
@@ -110,8 +128,8 @@ fun SettingsCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFF131D31))
-                    .border(1.dp, SurfaceBorder.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
+                    .background(cardItemColor)
+                    .border(1.dp, borderColor.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
                     .clickable { onProfileClick() }
                     .padding(horizontal = 14.dp, vertical = 14.dp)
                     .testTag("settings_profile_option"),
@@ -126,14 +144,14 @@ fun SettingsCard(
                         modifier = Modifier
                             .size(42.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF0C4A6E))
+                            .background(if (isDark) Color(0xFF0C4A6E) else Color(0xFFE0F2FE))
                             .border(1.5.dp, SkyBluePrimary, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Profile Icon",
-                            tint = SkyBlueLight,
+                            tint = if (isDark) SkyBlueLight else SkyBlueDark,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -143,7 +161,7 @@ fun SettingsCard(
                             text = "Profile",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
-                            color = TextPrimary
+                            color = textPrimaryColor
                         )
                         Text(
                             text = if (userName.isNotBlank()) {
@@ -152,7 +170,7 @@ fun SettingsCard(
                                 if (isBangla) "আপনার প্রোফাইল দেখুন ও আপডেট করুন" else "View and edit profile details"
                             },
                             fontSize = 12.sp,
-                            color = TextSecondary,
+                            color = textSecondaryColor,
                             maxLines = 1
                         )
                     }
@@ -161,7 +179,7 @@ fun SettingsCard(
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
                     contentDescription = "Open Profile",
-                    tint = SkyBlueLight,
+                    tint = chevronColor,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -173,8 +191,8 @@ fun SettingsCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFF131D31))
-                    .border(1.dp, SurfaceBorder.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
+                    .background(cardItemColor)
+                    .border(1.dp, borderColor.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
                     .clickable { onLanguageClick() }
                     .padding(horizontal = 14.dp, vertical = 14.dp)
                     .testTag("settings_language_option"),
@@ -189,14 +207,14 @@ fun SettingsCard(
                         modifier = Modifier
                             .size(42.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF0C2D48))
+                            .background(if (isDark) Color(0xFF0C2D48) else Color(0xFFE0F2FE))
                             .border(1.5.dp, SkyBlueLight, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Translate,
                             contentDescription = "Language Icon",
-                            tint = SkyBlueLight,
+                            tint = if (isDark) SkyBlueLight else SkyBlueDark,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -207,28 +225,28 @@ fun SettingsCard(
                                 text = "Language Change",
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = TextPrimary
+                                color = textPrimaryColor
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             // Active language indicator pill
                             Box(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(8.dp))
-                                    .background(Color(0xFF0C4A6E))
+                                    .background(pillBg)
                                     .padding(horizontal = 7.dp, vertical = 2.dp)
                             ) {
                                 Text(
                                     text = if (currentLanguage == "bn") "🇧🇩 বাংলা" else "🇬🇧 English",
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = SkyBlueLight
+                                    color = pillText
                                 )
                             }
                         }
                         Text(
                             text = if (isBangla) "অ্যাপের ভাষা বাংলা বা ইংরেজিতে পরিবর্তন করুন" else "Switch app language between English & বাংলা",
                             fontSize = 12.sp,
-                            color = TextSecondary,
+                            color = textSecondaryColor,
                             maxLines = 1
                         )
                     }
@@ -237,7 +255,7 @@ fun SettingsCard(
                 Icon(
                     imageVector = Icons.Default.ChevronRight,
                     contentDescription = "Change Language",
-                    tint = SkyBlueLight,
+                    tint = chevronColor,
                     modifier = Modifier.size(20.dp)
                 )
             }

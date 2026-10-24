@@ -43,13 +43,20 @@ import com.example.data.model.UserProfileEntity
 import com.example.ui.components.SettingsCard
 import com.example.ui.theme.AppThemeMode
 import com.example.ui.theme.BackgroundDark
+import com.example.ui.theme.SkyBlueDark
 import com.example.ui.theme.SkyBlueLight
 import com.example.ui.theme.SkyBluePrimary
 import com.example.ui.theme.SurfaceBorder
 import com.example.ui.theme.SurfaceCard
 import com.example.ui.theme.TextMuted
 import com.example.ui.theme.TextPrimary
-import com.example.ui.theme.TextSecondary
+import com.example.ui.theme.appBackgroundColor
+import com.example.ui.theme.appBorderColor
+import com.example.ui.theme.appCardItemColor
+import com.example.ui.theme.appSurfaceColor
+import com.example.ui.theme.appTextMuted
+import com.example.ui.theme.appTextPrimary
+import com.example.ui.theme.isDarkTheme
 import com.example.util.LanguageStrings
 
 /**
@@ -67,13 +74,21 @@ fun SettingsScreen(
     onToggleTheme: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDark = isDarkTheme()
+    val bgColor = appBackgroundColor()
+    val surfaceColor = appSurfaceColor()
+    val cardItemColor = appCardItemColor()
+    val borderColor = appBorderColor()
+    val textPrimaryColor = appTextPrimary()
+    val textMutedColor = appTextMuted()
+
     val userName = userProfile?.name ?: if (isBangla) "মোঃ জাহাঙ্গীর আলম" else "Md Jahangir Alam"
     val currentLang = userProfile?.language ?: if (isBangla) "bn" else "en"
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(BackgroundDark)
+            .background(bgColor)
             .padding(horizontal = 20.dp)
             .verticalScroll(rememberScrollState())
             .testTag("settings_screen")
@@ -106,12 +121,12 @@ fun SettingsScreen(
                     text = "Settings",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = TextPrimary
+                    color = textPrimaryColor
                 )
                 Text(
                     text = if (isBangla) "অ্যাপের সেটিংস ও প্রেফারেন্স পরিচালনা করুন" else "Manage your profile, language and app preferences",
                     fontSize = 12.sp,
-                    color = TextMuted
+                    color = textMutedColor
                 )
             }
         }
@@ -133,16 +148,16 @@ fun SettingsScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, SurfaceBorder, RoundedCornerShape(20.dp)),
+                .border(1.dp, borderColor, RoundedCornerShape(20.dp)),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+            colors = CardDefaults.cardColors(containerColor = surfaceColor)
         ) {
             Column(modifier = Modifier.padding(18.dp)) {
                 Text(
                     text = if (isBangla) "অ্যাপ প্রেফারেন্স" else "App Preferences",
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary
+                    color = textPrimaryColor
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -152,8 +167,8 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(14.dp))
-                        .background(Color(0xFF131D31))
-                        .border(1.dp, SurfaceBorder.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
+                        .background(cardItemColor)
+                        .border(1.dp, borderColor.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
                         .clickable { onToggleTheme() }
                         .padding(horizontal = 14.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -167,7 +182,7 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF1E293B)),
+                                .background(if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -177,7 +192,7 @@ fun SettingsScreen(
                                     AppThemeMode.SYSTEM -> Icons.Default.SettingsBrightness
                                 },
                                 contentDescription = "Theme",
-                                tint = SkyBlueLight,
+                                tint = if (isDark) SkyBlueLight else SkyBlueDark,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -187,7 +202,7 @@ fun SettingsScreen(
                                 text = if (isBangla) "থিম মোড (Dark / Light)" else "Theme Mode (Dark / Light)",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = TextPrimary
+                                color = textPrimaryColor
                             )
                             Text(
                                 text = when (themeMode) {
@@ -196,7 +211,7 @@ fun SettingsScreen(
                                     AppThemeMode.SYSTEM -> if (isBangla) "বর্তমান: ⚙️ সিস্টেম থিম" else "Current: ⚙️ System Default"
                                 },
                                 fontSize = 12.sp,
-                                color = TextMuted
+                                color = textMutedColor
                             )
                         }
                     }
@@ -216,8 +231,8 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(14.dp))
-                        .background(Color(0xFF131D31))
-                        .border(1.dp, SurfaceBorder.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
+                        .background(cardItemColor)
+                        .border(1.dp, borderColor.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
                         .clickable { onNavigateReminders() }
                         .padding(horizontal = 14.dp, vertical = 14.dp)
                         .testTag("settings_reminders_option"),
@@ -232,13 +247,13 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF1E293B)),
+                                .background(if (isDark) Color(0xFF1E293B) else Color(0xFFE2E8F0)),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Notifications,
                                 contentDescription = "Reminders",
-                                tint = SkyBlueLight,
+                                tint = if (isDark) SkyBlueLight else SkyBlueDark,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -248,12 +263,12 @@ fun SettingsScreen(
                                 text = if (isBangla) "দৈনিক ক্যাগেল রিমাইন্ডার" else "Daily Workout Reminders",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = TextPrimary
+                                color = textPrimaryColor
                             )
                             Text(
                                 text = if (isBangla) "অনুশীলনের সময় ও অ্যালার্ট নির্ধারণ করুন" else "Set workout times and notifications",
                                 fontSize = 12.sp,
-                                color = TextMuted
+                                color = textMutedColor
                             )
                         }
                     }
@@ -274,11 +289,11 @@ fun SettingsScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .border(1.dp, SurfaceBorder, RoundedCornerShape(20.dp))
+                .border(1.dp, borderColor, RoundedCornerShape(20.dp))
                 .clickable { onNavigateAbout() }
                 .testTag("settings_about_owner_option"),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = SurfaceCard)
+            colors = CardDefaults.cardColors(containerColor = surfaceColor)
         ) {
             Row(
                 modifier = Modifier
@@ -311,12 +326,12 @@ fun SettingsScreen(
                             text = if (isBangla) "মালিকানা ও অ্যাপ তথ্য" else "About & Owner Information",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = TextPrimary
+                            color = textPrimaryColor
                         )
                         Text(
                             text = "Md Jahangir Alam • FitLife Pro v1.0.0",
                             fontSize = 12.sp,
-                            color = TextMuted
+                            color = textMutedColor
                         )
                     }
                 }

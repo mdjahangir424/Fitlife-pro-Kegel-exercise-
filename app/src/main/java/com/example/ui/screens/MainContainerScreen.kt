@@ -323,12 +323,6 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         onCalendarClick = {
                             viewModel.navigateTo(Screen.CALENDAR)
                         },
-                        onNavigateProfile = {
-                            viewModel.navigateTo(Screen.PROFILE)
-                        },
-                        onNavigateLanguage = {
-                            viewModel.navigateTo(Screen.LANGUAGE_SELECTION)
-                        },
                         onToggleTheme = {
                             viewModel.toggleThemeMode()
                         }
@@ -518,12 +512,6 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                         },
                         onCalendarClick = {
                             viewModel.navigateTo(Screen.CALENDAR)
-                        },
-                        onNavigateProfile = {
-                            viewModel.navigateTo(Screen.PROFILE)
-                        },
-                        onNavigateLanguage = {
-                            viewModel.navigateTo(Screen.LANGUAGE_SELECTION)
                         },
                         onToggleTheme = {
                             viewModel.toggleThemeMode()
