@@ -469,64 +469,7 @@ fun ProfileSetupScreen(
             )
         }
 
-        // About App Creator link (if provided)
-        if (onViewAboutOwner != null) {
-            Spacer(modifier = Modifier.height(20.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onViewAboutOwner() }
-                    .testTag("profile_to_about_owner"),
-                colors = CardDefaults.cardColors(containerColor = SurfaceCard),
-                shape = RoundedCornerShape(14.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, SurfaceBorder)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF1E293B)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Info,
-                                contentDescription = "Info",
-                                tint = SkyBlueLight,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(14.dp))
-                        Column {
-                            Text(
-                                text = LanguageStrings.get("about_app_creator_btn", isBangla),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = TextPrimary
-                            )
-                            Text(
-                                text = "Md Jahangir Alam • Database & App Info",
-                                fontSize = 12.sp,
-                                color = TextMuted
-                            )
-                        }
-                    }
-                    Icon(
-                        imageVector = Icons.Default.ChevronRight,
-                        contentDescription = "Arrow",
-                        tint = TextMuted
-                    )
-                }
-            }
-        }
 
         Spacer(modifier = Modifier.height(36.dp))
     }
