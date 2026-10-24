@@ -116,6 +116,8 @@ class FitLifeRepository(private val database: FitLifeDatabase) {
         return@withContext root.toString(2)
     }
 
+    suspend fun exportAllDataAsJson(): String = exportDatabaseToJson()
+
     suspend fun seedInitialDataIfEmpty() = withContext(Dispatchers.IO) {
         val existingProfile = database.userProfileDao().getUserProfileOnce()
         if (existingProfile == null) {

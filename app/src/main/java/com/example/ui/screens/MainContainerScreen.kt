@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -72,12 +73,12 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = BackgroundDark,
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (showBottomBar) {
                 NavigationBar(
-                    containerColor = SurfaceCard,
-                    contentColor = TextPrimary,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
                     tonalElevation = 8.dp,
                     modifier = Modifier
                         .fillMaxWidth()
