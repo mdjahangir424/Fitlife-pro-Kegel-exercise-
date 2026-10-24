@@ -4,4 +4,5 @@
     <string name="app_owner_name">Md Jahangir Alam</string>
     <string name="app_owner_email">mdjahangiralam2528@gmail.com</string>
     <string name="app_owner_phone">+8801778600028</string>
+    <string name="default_web_client_id" translatable="false">placeholder_web_client_id</string>
 </resources>
