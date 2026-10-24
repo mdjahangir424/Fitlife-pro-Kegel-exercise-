@@ -128,7 +128,23 @@ object LanguageStrings {
         "copyright" to "© 2025-2026 FitLife Pro. সর্বস্বত্ব সংরক্ষিত।",
         "made_with" to "Made with ❤️ by Md Jahangir Alam",
         "play_store_ready" to "Play Store Upload Ready • Production Build",
-        "change_language" to "ভাষা পরিবর্তন (Language)"
+        "change_language" to "ভাষা পরিবর্তন (Language)",
+        "nav_language" to "ভাষা",
+        "nav_profile_setup" to "প্রোফাইল সেটাপ",
+        "profile_setup_tab_title" to "প্রোফাইল সেটাপ ও তথ্য",
+        "profile_setup_tab_sub" to "আপনার ব্যক্তিগত বিবরণ ও পেলভিক ফিটনেস লক্ষ্য আপডেট করুন",
+        "profile_save_success" to "✓ প্রোফাইল তথ্য সফলভাবে সংরক্ষিত হয়েছে!",
+        "language_tab_title" to "ভাষা ও ডিসপ্লে সেটিংস",
+        "language_tab_sub" to "এক ক্লিকে ভাষা ও থিম পরিবর্তন করুন",
+        "quick_toggle_lang" to "এক ক্লিকে ভাষা পরিবর্তন (Quick Switch)",
+        "quick_toggle_btn" to "বাংলা ⇄ English",
+        "theme_select_title" to "ডিসপ্লে থিম নির্বাচন",
+        "theme_dark_mode" to "ডার্ক মোড",
+        "theme_light_mode" to "লাইট কালার",
+        "theme_system_mode" to "সিস্টেম ডিফল্ট",
+        "go_to_profile_setup" to "প্রোফাইল সেটাপ ট্যাবে যান",
+        "cloud_account_status" to "ক্লাউড সিঙ্ক অ্যাকাউন্ট",
+        "about_app_creator_btn" to "অ্যাপ নির্মাতা ও ডেটাবেস নিয়ন্ত্রণ"
     )
 
     private val englishStrings = mapOf(
@@ -253,6 +269,22 @@ object LanguageStrings {
         "copyright" to "© 2025-2026 FitLife Pro. All rights reserved.",
         "made_with" to "Made with ❤️ by Md Jahangir Alam",
         "play_store_ready" to "Play Store Upload Ready • Production Build",
-        "change_language" to "Change Language"
+        "change_language" to "Change Language",
+        "nav_language" to "Language",
+        "nav_profile_setup" to "Profile",
+        "profile_setup_tab_title" to "Profile Setup & Info",
+        "profile_setup_tab_sub" to "Update your personal details & pelvic fitness goals",
+        "profile_save_success" to "✓ Profile saved successfully!",
+        "language_tab_title" to "Language & Display Settings",
+        "language_tab_sub" to "Switch language & display theme with 1 click",
+        "quick_toggle_lang" to "1-Click Quick Language Switch",
+        "quick_toggle_btn" to "English ⇄ বাংলা",
+        "theme_select_title" to "Display Theme Mode",
+        "theme_dark_mode" to "Dark Mode",
+        "theme_light_mode" to "Light Color",
+        "theme_system_mode" to "System Default",
+        "go_to_profile_setup" to "Go to Profile Setup",
+        "cloud_account_status" to "Cloud Sync Account",
+        "about_app_creator_btn" to "App Creator & Database Control"
     )
 }
