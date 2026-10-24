@@ -362,6 +362,7 @@ fun MainContainerScreen(viewModel: FitLifeViewModel) {
                     ProgressScreen(
                         totalWorkouts = totalWorkouts,
                         totalMinutes = totalMins ?: 56,
+                        workoutHistory = workoutHistory,
                         isBangla = isBangla,
                         onViewHistory = {
                             viewModel.navigateTo(Screen.HISTORY)
